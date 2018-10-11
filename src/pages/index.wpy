@@ -1,0 +1,125 @@
+<template>
+  <view class="container">
+    <repeat for="{{timeline}}" key="index" index="index" item="item">
+      <view @tap="navToPost({{item}})">
+        <card :post.sync="item"></card>
+      </view>
+    </repeat>
+    <navigator url="./publisher" class="publisher-btn">
+      <image src="../assets/images/feather.png"></image>
+    </navigator>
+  </view>
+</template>
+
+<style lang="less" scoped>
+.publisher-btn{
+  width: 60px;
+  height: 60px;
+  background-color: #ff9630;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -1px 2px 9px 0px rgba(176,176,176,1);
+
+  > image{
+    width: 23px;
+    height: 23px;
+  }
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import req from '@/network'
+import Card from '@/components/card'
+import { connect } from 'wepy-redux'
+import { initTimeline, prependTimeline, appendTimeline } from '@/store/actions'
+import { formatTimeline } from '@/utils'
+
+@connect({
+  timeline(state) {
+    return state.home.timeline
+  }
+}, {
+  initTimeline,
+  prependTimeline,
+  appendTimeline
+})
+
+export default class Index extends wepy.page {
+  config = {
+    enablePullDownRefresh: true
+  }
+
+  refreshing = false
+  loadingMore = false
+  loadedEnd = false
+
+  methods = {
+    navToPost(post) {
+      this.$preload('post', post)
+      this.$navigate('./post', { id: post.id })
+    }
+  }
+
+  events = {}
+
+  onLoad() {
+    this.getTimeline()
+  }
+
+  getTimeline() {
+    wx.showToast({
+      title: 'loading...',
+      icon: 'loading'
+    })
+    // req.get('/timeline.json').then(res => {
+    //   this.methods.initTimeline(formatTimeline(res.data))
+    // }).then(res => wx.hideToast())
+  }
+
+  onPullDownRefresh() {
+    if (this.refreshing) return false
+
+    this.refreshing = true
+    req.get('/refresh_timeline.json').then(res => {
+      if (parseInt(this.timeline[0].id) === 48) {
+        // this.$emit('show-tip')
+      } else {
+        const timeline = formatTimeline(res.data)
+        this.methods.prependTimeline(timeline)
+      }
+      this.refreshing = false
+      wx.stopPullDownRefresh()
+    })
+  }
+
+  onReachBottom() {
+    if (this.loadingMore || this.loadedEnd) return false
+
+    this.loadingMore = true
+    wx.showToast({
+      title: 'loading...',
+      icon: 'loading'
+    })
+    req.get('/more_timeline.json').then(res => {
+      const id = parseInt(this.timeline[this.timeline.length - 1].id)
+      if (id === 24) {
+        this.loadedEnd = true
+      } else {
+        const timeline = formatTimeline(res.data)
+        this.methods.appendTimeline(timeline)
+      }
+      this.loadingMore = false
+    }).then(res => wx.hideToast())
+  }
+
+  components = {
+    card: Card
+  }
+}
+</script>

@@ -1,0 +1,151 @@
+<template>
+  <view class="divider-horizontal"></view>
+  <view class="timeline content padding-horizontal">
+    <view class="timeline-head ">
+      <image class="timeline-head-img"
+           src="https://ss0.baidu.com/73x1bjeh1BF3odCf/it/u=747248536,1655132067&fm=85&s=35B73F9E4501494D186D727E0300807B"/>
+      <view style="flex-direction: column">
+        <view><view class="timeline-author">{{datas.user.name}}</view></view>
+        <view><view class="timeline-time text-auxiliary">{{datas.createTime}}</view></view>
+      </view>
+    </view>
+    <!--内容-->
+    <view class="timeline-content margin-vertical-small">
+      <view class="timeline-content-text">{{datas.content}}</view>
+      <!--<photogrid :test="getImgs" :photos.sycn="datas.imgs"></photogrid>-->
+      <view class="layout layout-list">
+        <repeat for="{{datas.imgs}}" index="index" item="img" key="key">
+          <view  style="margin-left:{{index % 3 > 0 ? 4 : 0}}px;padding: 0px" class="col col-7">
+            <view class="photogrid-item-container">
+              <image class="photogrid-item-img" src="{{img}}" />
+            </view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+    <!--热评-->
+    <view class="timeline-comment">
+    </view>
+    <!--操作-->
+    <view class="timeline-operation margin-vertical-small">
+      <view class="layout layout-list timeline-operation--left text-auxiliary" type="flex">
+        <view class="timeline-operation-item col col-4" view="4">
+          <icon1 type="laud"></icon1>
+          <text style="padding-left: 2px">{{datas.like}}</text>
+        </view>
+        <view class="timeline-operation-item col col-4" view="4">
+          <icon2 type="comment"></icon2>
+          <text style="padding-left: 2px">{{datas.comment}}</text>
+        </view>
+        <view class="timeline-operation-item col col-4" view="4">
+          <icon3 type="forward"></icon3>
+          <text style="padding-left: 2px">{{datas.share}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<style lang="less" scoped>
+  .timeline1 {
+    height: 300px;
+  }
+</style>
+
+<script>
+import wepy from 'wepy'
+import photogrid from '@/components/photogrid'
+import {TimelineBean} from '@/models/models'
+import Icon from 'kai-ui/Icon'
+
+export default class Timeline extends wepy.component {
+  props = {
+    datas: {
+      type: TimelineBean,
+      default: new TimelineBean()
+    },
+    timetest: {
+      type: String,
+      default: 'timetest'
+    }
+  }
+
+  components = {
+    photogrid: photogrid,
+    icon1: Icon,
+    icon2: Icon,
+    icon3: Icon
+  }
+
+  data = {
+    gutter: 5
+  }
+
+  computed = {
+  }
+  methods = {
+  }
+  events = {}
+
+  onLoad() {
+    console.warn('viewoad ' + this.datas)
+  }
+  created() {
+    console.warn('timeline onshow ' + this.datas)
+  }
+  attached() {
+    console.warn('timeline attached ' + this.datas)
+  }
+  ready() {
+    console.warn('timeline ready ' + this.datas)
+  }
+}
+</script>
+<style lang="less">
+  .timeline {
+
+    &-head {
+      display: flex;
+      align-items: center;
+    }
+    &-head-img {
+      height: 35px;
+      width: 35px;
+      margin-right: 5px;
+      display: flex;
+      flex-direction: column;
+    }
+    &-author {
+      color: #108ee9;
+    }
+    &-operation {
+      &--left {
+      }
+      &-item {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+
+  .photogrid {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    &-item {
+      &-container {
+        width: 100%;
+        height: 0px;
+        padding-bottom: 100%;
+        overflow: hidden;
+        position: relative;
+      }
+      &-img {
+
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+</style>

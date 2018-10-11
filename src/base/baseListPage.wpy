@@ -1,0 +1,49 @@
+<script>
+import Basepage from '@/base/basepage'
+import {PageListBean} from '@/models/models'
+
+export default class BaseListPage extends Basepage {
+  data = {
+    pageData: new PageListBean()
+  }
+
+  // methods = {}
+  //
+  // events = {}
+
+  afterRequstData(res) {
+    this.pageData.appendData(new PageListBean(res.result))
+    // this.refreshing = false
+    this.$broadcast('refreshing', false)
+    this.$broadcast('loadingMore', false)
+    if (this.pageData.listData.length === 0) {
+      this.$broadcast('updatePageStatus', this.PAGE_EMPTY)
+      this.$broadcast('loadingEnd', false)
+    } else {
+      this.$broadcast('updatePageStatus', this.PAGE_SUCCESS)
+      if (this.pageData.page.finished) {
+        this.$broadcast('loadingEnd', true)
+      }
+    }
+    this.$apply()
+    wx.stopPullDownRefresh()
+  }
+  onPullDownRefresh() {
+    // if (this.refreshing || this.loadingMore) return false
+    this.pageData.init()
+    this.$broadcast('loadingEnd', false)
+    // this.refreshing = true
+    this.$broadcast('refreshing', true)
+    // this.$apply()
+    this.requestData()
+  }
+
+  onReachBottom() {
+    if (this.pageData.page.finished) return false
+    // this.loadingMore = true
+    this.$broadcast('loadingMore', true)
+    // this.$apply()
+    this.requestData()
+  }
+}
+</script>

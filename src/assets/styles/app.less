@@ -1,0 +1,98 @@
+.empty-content{
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  .iconfont{
+    font-size: 80px;
+    color: #929292;
+  }
+  .text {
+    font-size: 14px;
+    color: #929292;
+    margin-top: 6px;
+  }
+}
+
+/* override zanui components style */
+.zan-panel {
+  margin-top: 15px;
+}
+
+.zan-cell {
+  padding: 0 15px;
+  min-height: 44px;
+}
+
+.zan-cell__icon{
+  font-size: 25px;
+  margin-right: 10px;
+}
+
+
+
+@divider-width: 1px;
+@divider-color: #dddddd;
+@theme-color:#38f;
+
+.whole-page{
+  height: 100%;
+  width: 100%;
+}
+
+.text-title{
+  color:#000000;
+  font-size: 16px;
+}
+.text-primary{
+  color:#000000;
+  font-size: 14px;
+}
+.text-secondary{
+  color:#000000;
+  font-size: 12px;
+}
+.text-auxiliary{
+  color:#c8cacc;
+  font-size: 12px;
+}
+
+.margin-vertical {
+  margin-top: 10px;
+}
+
+.margin-vertical-small {
+  margin-top: 5px;
+}
+
+.padding-horizontal {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.content{
+  &:extend(.padding-horizontal);
+  background: #ffffff;
+  font-size: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+}
+
+.divider-horizontal {
+  height: @divider-width;
+  color: @divider-color;
+}
+
+.center-vertical-forchild{
+  display: flex;
+  align-items: center;
+}
+.center-horizontal-forchild{
+  display: flex;
+  justify-content:center;
+}
+.center-forchild{
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}

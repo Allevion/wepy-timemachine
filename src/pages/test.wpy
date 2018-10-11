@@ -1,0 +1,71 @@
+<template>
+  <basepage class="basepage">
+    <repeat for="{{pageData.listData}}" index="index" item="item" key="key">
+      <timeline :datas.sync="item"></timeline>
+      <!--<photogrid :test="getthis(item)"></photogrid>-->
+    </repeat>
+  </basepage>
+</template>
+
+<style lang="less" scoped>
+
+</style>
+
+<script>
+import BaseListPage from '@/base/baseListPage'
+import Panel from 'kai-ui/Panel'
+import req from '@/network'
+import Timeline from '@/components/timeline'
+import basepage from '@/components/basepage'
+import wepy from 'wepy'
+import photogrid from '@/components/photogrid'
+
+export default class Test extends wepy.page {
+  config = {
+    navigationBarTitleText: '时光机',
+    enablePullDownRefresh: true
+  }
+
+  mixins = [BaseListPage]
+
+  components = {
+    panel: Panel,
+    timeline: Timeline,
+    basepage: basepage,
+    photogrid: photogrid
+  }
+  methods = {
+    btnClick() {
+      console.warn('btnClick')
+      this.$broadcast('updatePageStatus', this.PAGE_ERROR)
+    },
+    getthis(thing) {
+      return thing
+    }
+  }
+
+  events = {}
+
+  requestData() {
+    req.get('/test/getdata?index=' + this.pageData.getNextIndex())
+      .then(res => {
+        this.afterRequstData(res)
+      })
+  }
+  // onLoad() {
+  //   console.warn(this.content)
+  //   console.warn(this.basepage)
+  // }
+
+  onShareAppMessage (res) {
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target)
+    }
+    return {
+      title: '自定义转发标题',
+      path: '/page/user?id=123'
+    }
+  }
+}
+</script>

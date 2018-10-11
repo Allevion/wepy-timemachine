@@ -1,0 +1,68 @@
+<script>
+import wepy from 'wepy'
+import {BaseBean} from '@/models/models'
+
+export default class Basepage extends wepy.mixin {
+  PAGE_ERROR = 'PAGE_ERROR'
+  PAGE_EMPTY = 'PAGE_EMPTY'
+  PAGE_SUCCESS = 'PAGE_SUCCESS'
+  // refreshing = false
+  // loadingMore = false
+  // loadingEnd = false
+
+  data = {
+    pageStatus: this.PAGE_SUCCESS,
+    pageData: new BaseBean()
+  }
+  initData () {
+  }
+
+  requestData () {
+  }
+
+  isLogin() {
+  }
+
+  login(returnUrl, forceLogin) {
+    if (forceLogin) {
+    } else {
+    }
+  }
+
+  logout(returnLogin = false) {
+    this.$store.dispatch('UserLogout')
+    if (returnLogin) {
+      this.login()
+    } else {
+      this.$router.push('/')
+    }
+  }
+
+  showLoading() {
+  }
+
+  closeLoading() {
+  }
+
+  data = {
+    content: 'basepage data content',
+    basepage: 'basepage data basepage ',
+    pageData: {},
+    listData: []
+  }
+
+  methods = {
+  }
+
+  events = {}
+
+  onLoad() {
+    // console.warn('base onload')
+    // this.initData()
+    this.requestData()
+  }
+
+  onShow() {
+  }
+}
+</script>

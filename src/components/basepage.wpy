@@ -1,0 +1,78 @@
+<template >
+  <view class="basepage whole-page">
+    <view class="whole-page center-forchild" wx:if="{{pageStatus==='PAGE_ERROR'}}">
+      错误
+    </view>
+    <view class="whole-page center-forchild" wx:if="{{pageStatus==='PAGE_EMPTY'}}">
+      空
+    </view>
+    <view class="whole-page" wx:if="{{pageStatus==='PAGE_SUCCESS'}}">
+      <slot></slot>
+    </view>
+    <!--<view hidden="{{!loadingEnd}}">底线到了</view>-->
+    <!--<view hidden="{{!loadingMore}}">加载更多</view>-->
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Loadmore from 'kai-ui/Loadmore'
+
+export default class Basepage extends wepy.component {
+  PAGE_ERROR = 'PAGE_ERROR'
+  PAGE_EMPTY = 'PAGE_EMPTY'
+  PAGE_SUCCESS = 'PAGE_SUCCESS'
+
+  data = {
+    refreshing: false,
+    loadingEnd: false,
+    loadingMore: false,
+    more: {
+      type: false,
+      loading: 'loading',
+      loaded: '加载完成'
+    },
+    pageStatus: this.PAGE_SUCCESS
+  }
+  // props = {
+  //   pageStatus: {
+  //     type: String,
+  //     default: this.PAGE_SUCCESS
+  //   }
+  // }
+
+  components = {
+    loadmore: Loadmore
+  }
+
+  methods = {
+  }
+
+  events = {
+    'updatePageStatus': (newStatus, event) => {
+      this.pageStatus = newStatus
+      this.$apply()
+    },
+    'loadingMore': (newStatus, event) => {
+      // console.warn('loadingMore' + newStatus)
+      this.loadingMore = newStatus
+      this.more.type = newStatus
+      this.$apply()
+    },
+    'loadingEnd': (newStatus, event) => {
+      // console.warn('loadingEnd' + newStatus)
+      this.loadingEnd = newStatus
+      this.$apply()
+    }
+  }
+
+  onLoad() {
+  }
+
+  onShow() {
+  }
+}
+</script>
+
+<style>
+</style>
