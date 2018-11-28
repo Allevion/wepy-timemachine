@@ -32,6 +32,9 @@ class Request {
       method: method || METHOD.GET,
       data: data,
       header: {
+        ...{
+          'content-type': 'application/x-www-form-urlencoded'
+        },
         ...this._header,
         ...header
       }

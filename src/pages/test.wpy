@@ -1,5 +1,6 @@
 <template>
   <basepage class="basepage">
+    <button open-type="getUserInfo">授权</button>
     <repeat for="{{pageData.listData}}" index="index" item="item" key="key">
       <timeline :datas.sync="item"></timeline>
       <!--<photogrid :test="getthis(item)"></photogrid>-->
@@ -38,9 +39,6 @@ export default class Test extends wepy.page {
     btnClick() {
       console.warn('btnClick')
       this.$broadcast('updatePageStatus', this.PAGE_ERROR)
-    },
-    getthis(thing) {
-      return thing
     }
   }
 
@@ -52,10 +50,16 @@ export default class Test extends wepy.page {
         this.afterRequstData(res)
       })
   }
-  // onLoad() {
-  //   console.warn(this.content)
-  //   console.warn(this.basepage)
-  // }
+  onLoad() {
+    // console.warn(this.content)
+    // console.warn(this.basepage)
+
+    this.$parent.getUserInfo().then(user => {
+      // this.userInfo = user
+      // this.$apply()
+      console.warn(user)
+    })
+  }
 
   onShareAppMessage (res) {
     if (res.from === 'button') {

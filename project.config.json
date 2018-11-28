@@ -1,13 +1,15 @@
 {
-  "description": "A simple and interesting wechat app.",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "postcss": false,
-    "minified": false
-  },
-  "compileType": "miniprogram",
-  "appid": "touristappid",
-  "projectname": "weapp-hiapp",
-  "miniprogramRoot": "./dist"
+	"description": "A simple and interesting wechat app.",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wx1414ac24f75c5e56",
+	"projectname": "timemachine",
+	"miniprogramRoot": "dist/",
+	"condition": {}
 }

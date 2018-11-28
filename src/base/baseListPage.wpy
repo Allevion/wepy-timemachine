@@ -12,7 +12,7 @@ export default class BaseListPage extends Basepage {
   // events = {}
 
   afterRequstData(res) {
-    this.pageData.appendData(new PageListBean(res.result))
+    this.pageData.appendData(new PageListBean(res))
     // this.refreshing = false
     this.$broadcast('refreshing', false)
     this.$broadcast('loadingMore', false)

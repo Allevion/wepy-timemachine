@@ -78,6 +78,27 @@ export default class extends wepy.app {
 
   onLaunch() {
     req.baseUrl(baseUrl).interceptor(interceptor.request, interceptor.response)
+    wx.login({
+      success: res => {
+        const code = res.code
+        if (code) {
+          req.get('/user/getWechatCodeXiaochengxu?wxcode=' + code).then(res => {
+            wx.getUserInfo({
+              success: function(res2) {
+                if (res2.errMsg === 'getUserInfo:ok') {
+                  res2.session_key = res.session_key
+                  req.post('/user/loginByWechatXiaochengxu', res2).then(res3 => {
+                    console.warn(res3)
+                  })
+                }
+              }
+            })
+          }).catch(error => {
+            console.warn(error)
+          })
+        }
+      }
+    })
   }
 
   getUserInfo() {
