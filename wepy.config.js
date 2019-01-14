@@ -14,7 +14,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@': path.join(__dirname, 'src')
+      '@': path.resolve(__dirname, './src'),
+      'src': path.resolve(__dirname, 'src')
     },
     aliasFields: ['wepy'],
     modules: ['node_modules']
