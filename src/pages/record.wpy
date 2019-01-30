@@ -1,0 +1,156 @@
+<style lang="less" type="text/less" scoped>
+  .day-show{
+    flex-grow: 1;
+    text-align: center;
+    border-bottom:solid dodgerblue;
+    border-width: 1px;
+    margin: 15px;
+    color: dodgerblue;
+  }
+</style>
+
+<template>
+  <basepage class="basepage">
+    <view class="list_body">
+      <view @tap="changeMode">{{changeModeStr}}</view>
+      <image src="{{changeModeIcon}}" style="width: 20px;height: 20px"/>
+    </view>
+    <view class="divider-horizontal"/>
+    <view wx:if="{{selectMode}}" class="content">
+      <view wx:if="{{dayMode}}" class="flex">
+        <input @tap="dayBeginClick" class="day-show" value="{{dayBegin}}" disabled="{{true}}"/>
+        <view>至</view>
+        <input @tap="dayEndClick" class="day-show" value="{{dayEnd}}" placeholder="选填"  disabled="{{true}}"/>
+      </view>
+      <view wx:if="{{!dayMode}}" class="flex">
+        <view class="day-show" style="margin:15px auto">{{month}}</view>
+      </view>
+      <view class="divider-horizontal"/>
+      <datePicker :date="date" :withDay.sync="dayMode"></datePicker>
+      <view class="flex">
+        <button class="btn-nagative" @tap="reset">重置</button>
+        <button class="btn-positive" @tap="comfirm">确定</button>
+      </view>
+    </view>
+  </basepage>
+</template>
+
+<script>
+  import Basepage from 'src/base/basepage'
+  import basepage from 'src/components/basepage'
+  import datePicker from 'src/components/datePicker'
+  import wepy from 'wepy'
+  import timeUtils from 'src/utils/timeUtils'
+  import objectUtils from '../utils/objectUtils'
+  export default class Record extends wepy.page {
+    mixins = [Basepage]
+    config = {
+      navigationBarTitleText: 'Record',
+      usingComponents: {
+        'wxc-toast': '../../packages/@minui/wxc-toast/dist/index'
+      }
+    }
+    components = {
+      basepage: basepage,
+      datePicker: datePicker
+    }
+    props = {}
+    data = {
+      changeModeStr: timeUtils.formatDate(new Date(), 'yyyy-MM'),
+      changeModeIcon: '',
+      date: new Date(),
+      selectMode: false,
+      dayChangeFocus: 'month',
+      dayMode: false,
+      dayBegin: timeUtils.formatDate(new Date(), 'yyyy-MM-dd'),
+      dayEnd: '',
+      month: timeUtils.formatDate(new Date(), 'yyyy-MM'),
+    }
+    methods = {
+      dayBeginClick() {
+        this.date = timeUtils.stringToDate(this.dayBegin)
+        this.dayChangeFocus = 'day1'
+      },
+      dayEndClick() {
+        if (!objectUtils.isEmpty(this.dayEnd)) {
+          this.date = timeUtils.stringToDate(this.dayEnd)
+        }
+        this.dayChangeFocus = 'day2'
+      },
+      changeMode() {
+        if (this.selectMode) {
+          this.dayMode = !this.dayMode
+          if (this.dayMode) {
+            this.changeModeStr = '按天选择'
+          } else {
+            this.changeModeStr = '按月选择'
+          }
+        } else {
+          this.selectMode = true
+          this.dayMode = false
+          this.changeModeStr = '按月选择'
+        }
+      },
+      comfirm() {
+        this.selectMode = false
+        if (this.dayMode) {
+          this.changeModeStr = this.dayBegin
+          if (!objectUtils.isEmpty(this.dayEnd)) {
+            this.changeModeStr = this.changeModeStr + '/' + this.dayEnd
+          }
+        } else {
+          this.changeModeStr = this.month
+        }
+      },
+      reset() {
+        this.dayChangeFocus = 'month'
+        this.month = timeUtils.formatDate(new Date(), 'yyyy-MM')
+        this.dayMode = false
+      }
+    }
+    computed = {
+      getDate () {
+        return timeUtils.formatDate(this.date, 'yyyy-MM-dd')
+      }
+    }
+    events = {}
+    watch = {
+      date(curVal, oldVal) {
+        let newDate = ''
+        if (this.dayMode) {
+          newDate = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
+        } else {
+          newDate = timeUtils.formatDate(curVal, 'yyyy-MM')
+        }
+        if (this.dayChangeFocus === 'month') {
+          this.month = newDate
+        } else if (this.dayChangeFocus === 'day1') {
+          this.dayBegin = newDate
+        } else if (this.dayChangeFocus === 'day2') {
+          this.dayEnd = newDate
+        }
+      },
+      dayMode(curVal, oldVal) {
+        if (curVal === true) {
+          this.dayChangeFocus = 'day1'
+        } else {
+          this.dayChangeFocus = 'month'
+        }
+      },
+      dayChangeFocus(curVal) {
+        console.log('change focus')
+        if (curVal === 'month') {
+          this.date = timeUtils.stringToDate(this.month)
+        } else if (curVal === 'day1') {
+          this.date = timeUtils.stringToDate(this.dayBegin)
+        } else if (curVal === 'day2') {
+          this.date = timeUtils.stringToDate(this.dayEnd)
+        }
+      }
+    }
+
+    onLoad() {
+      // console.log((new Date()).getTime())
+    }
+  }
+</script>

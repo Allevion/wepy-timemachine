@@ -1,0 +1,516 @@
+<style lang="less" type="text/less" scoped>
+  page{
+    background-color: #fff;
+  }
+  input:-moz-placeholder{
+    font-size: 32rpx;
+    color: #b5b5b5
+  }
+  input:-ms-input-placeholder{
+    font-size: 32rpx;
+    color: #b5b5b5
+  }
+  input:-webkit-input-placeholder{
+    font-size: 32rpx;
+    color: #b5b5b5
+  }
+  .top-container{
+    text-align: center;
+    color: #666;
+    font-size: 24rpx;
+    border-top: solid 1px #ebebeb
+  }
+  .top-container view image{
+    width: 200rpx;
+    margin-top: 50rpx;
+    margin-bottom: 10rpx;
+  }
+  .input-container{
+    margin-top: 60rpx;
+  }
+  input{
+    color: #333;
+    font-size: 32rpx;
+    height:80rpx;
+    line-height: 110rpx;
+    margin: 0 30rpx;
+    padding-left: 10rpx;
+    border-bottom: solid 1rpx #ebebeb
+  }
+  .authcode-container{
+    position: relative;
+  }
+  .authcode-container text{
+    position: absolute;
+    display: inline-block;
+    right: 40rpx;
+    padding: 4rpx 10rpx;
+    color: #2388ff;
+    z-index: 1111;
+    top: 18rpx;
+    font-size: 24rpx;
+    border: solid 1rpx #2388ff;
+    border-radius: 4rpx;
+  }
+
+  .regBtn{
+    background-color: #2388ff;
+    margin: 70rpx 30rpx;
+    color: #fff;
+    font-size: 36rpx;
+  }
+  .bottom-container{
+    position: fixed;
+    width: 100%;
+    bottom: 60rpx;
+    margin-top: 60rpx;
+  }
+
+  .data-report{
+    display: flex;
+    height: 126rpx;
+    text-align: center;
+    color: rgba(102,102,102,.7);
+    font-size: 24rpx;
+    background-color: #fbfbfb;
+    padding-top: 10rpx;
+  }
+  .data-report view >text{
+    color: rgba(102,102,102,.3);
+  }
+
+  .data-report view{
+    position: relative;
+    -webkit-flex: 0 30%;
+    -ms-flex: 0 30%;
+    flex: 0 30%;
+    font-family: DINPro-Medium;
+    font-size: 32rpx;
+    color: #666666;
+  }
+  .data-report view view:first-child{
+    color: rgba(102,102,102,.7);
+    font-size: 24rpx;
+    margin-top: 10rpx;
+    margin-bottom: 6rpx;
+  }
+  .data-report view:nth-child(2){
+    -webkit-flex: 0 40%;
+    -ms-flex: 0 40%;
+    flex: 0 40%;
+  }
+  .data-report view:not(:last-child):after{
+    position: absolute;
+    content: "";
+    width: 1px;
+    height:72rpx ;
+    right: 0;
+    top: 10rpx;
+    background-color: rgba(102,102,102,.3);
+  }
+  .tencentSafe{
+    margin-top: 30rpx;
+    text-align: center;
+    color: #bebebe
+  }
+  .tencentSafe image{
+    width: 50rpx;
+    vertical-align: middle
+  }
+  .agreement-container{
+    text-align: center;
+    color: #b5b5b5;
+    font-size: 24rpx;
+    margin-top: 30rpx;
+  }
+  .userAgreement{
+    color: #ff6817;
+  }
+</style>
+
+<template>
+  <view class='top-container'>
+    <view>
+      <image mode='widthFix' src='http://file.88mmmoney.com/6412fbdd-f64c-4082-97c6-fc4177e717b4'></image>
+    </view>
+    <text class='mmintro'>绑定妈妈钱包账号，兑换奖品</text>
+  </view>
+  <view class='input-container'>
+    <input placeholder='请输入手机号' type='number' maxlength='11' bindinput='phoneInput'></input>
+    <input wx:if='{{showLogin}}' placeholder='请输入您的密码' type='text' password='true' bindinput='loginPwdInput'></input>
+    <view class='authcode-container' wx:if="{{showReg}}">
+      <input placeholder='请输入短信验证码'  bindinput='authCodeInput'></input>
+      <text bindtap='getAuthCode'>{{authCodeText}}</text>
+    </view>
+    <input wx:if="{{showReg}}" password='true' placeholder='请输入6-20位登录密码' maxlength='20'  bindinput='regPwdInput'></input>
+    <input wx:if="{{showReg}}" type='number' placeholder='请输入推荐人手机号(选填)'  bindinput='friendCodeInput'></input>
+    <button class='regBtn' bindtap='bindMama'>{{btnText}}</button>
+  </view>
+  <view class='bottom-container'>
+    <view class='data-report'>
+      <view>
+        <view>稳健运营
+          <text>(天)</text>
+        </view>
+        <view>{{operationDays}}</view>
+      </view>
+      <view>
+        <view>累计为投资人赚取
+          <text>(元)</text>
+        </view>
+        <view>{{receivedInterestAll}}</view>
+      </view>
+      <view>
+        <view>合规成交
+          <text>(笔)</text>
+        </view>
+        <view>{{totalBidOrderCount}}</view>
+      </view>
+    </view>
+    <view class='tencentSafe'>
+      <image src='http://file.88mmmoney.com/bb72e258-00a9-4788-a2c8-9f7df8696ff6' mode='widthFix'></image>
+      <text>腾讯云数据安全保障</text>
+    </view>
+    <!-- <view class='agreement-container'>
+      <text>注册代表您同意</text><text class='userAgreement'>《用户协议》</text>
+    </view> -->
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import req from '@/network'
+  import rsaUtil from 'src/utils/rsaUtil.js'
+
+  export default class LoginReg extends wepy.page {
+    config = {
+      navigationBarTitleText: '绑定账户'
+    }
+    components = {}
+    props = {}
+    data = {
+      showReg: false,
+      showLogin: false,
+      phone: '13',
+      loginPwd: '',
+      regPwd: '',
+      authCode: '',
+      friendCode: '',
+      authCodeText: '获取验证码',
+      btnText: '绑定',
+      operationDays: 0,
+      receivedInterestAll: 0,
+      totalBidOrderCount: 0,
+      time: 60
+    }
+    methods = {
+      loginPwdInput(e) {
+        const value = e.detail.value
+        this.loginPwd = value
+      },
+      regPwdInput(e) {
+        const value = e.detail.value
+        this.regPwd = value
+      },
+      authCodeInput(e) {
+        const value = e.detail.value
+        this.authCode = value
+      },
+      friendCodeInput(e) {
+        const value = e.detail.value
+        this.friendCode = value
+      },
+      phoneInput(e) {
+        let that = this
+        const phone = e.detail.value
+        this.phone = phone
+        const regPattern_mobile = /^[1][0-9]{10}$/
+        if (regPattern_mobile.test(phone)) {
+          const param = {
+            mobile: phone
+          }
+          req.post('checkLoginNameExt.htm', param)
+            .then(res => {
+              that.showReg= true
+              that.showLogin= false
+              that.btnText= '注册绑定'
+              that.$apply()
+          }).catch(e => {
+            if(e.code === '00040001'){
+              that.showReg= false
+              that.showLogin= true
+              that.btnText= '绑定'
+              that.$apply()
+            }
+          })
+
+        } else {
+          that.showReg= false
+          that.showLogin= false
+          that.btnText= '绑定'
+          that.$apply()
+
+        }
+      },
+
+      bindMama() {
+        // const unionid = wx.getStorageSync('unionid')
+        if (this.showLogin) { // 登录
+          // if (this.checkPhone(this.phone) && this.checkLoginPwd(this.loginPwd)) {
+            // wx.showLoading({
+            //   title: '登录中',
+            // })
+            var params = {
+              mobile: this.phone,
+              password: rsaUtil.default.encrypt(this.loginPwd),
+              // password:'Wo/TsoxBlwW/WZigK5ZcvYDwH+3no44GxN++dqIbRZzQFsCJsY+TqmxNUEkt0HMWDWQ2T+f7YUrWzEGUnsjP8QbemiuRo0Z+ClOFKW0xqYBHOid9bN76q/3VOJWDYLpkIga5gAmmNRqVeesyqxrwEMh6rsHd26b7wEMxvjjhz+I=',
+              // unionid: unionid,
+              device: '4'
+            }
+            req.post('login.htm', params).then(res => {
+              wx.hideLoading()
+              wx.setStorageSync('memberInfo', res)
+              wx.navigateBack({
+                delta: 1
+              })
+              // todo
+              // request.saveUserInfo(unionid)
+            }).catch(e => {
+              wx.showToast({
+                title: res.result.message,
+                icon: 'none',
+              })
+            })
+          // }
+        } else { // 注册
+          wx.showLoading({
+            title: '正在注册...',
+          })
+          if (this.checkPhone(this.phone) && this.checkPwd(this.regPwd) && this.checkAuthCode(this.authCode) && this.checkFriendCode(this.friendCode)) {
+            var params = {
+              service: 'register',
+              mobile: this.phone,
+              password: this.regPwd,
+              unionid: unionid,
+              phoneVerifyCode: this.authCode,
+              friendCode: this.friendCode,
+              device: '4'
+            }
+            req.post('register.htm', params).then(res => {
+              const memberInfo = res
+              memberInfo.regProdPlatform = '10'
+              memberInfo.dmaDealPasswordStatus = false
+              // wx.setStorageSync('memberInfo', memberInfo)
+              setTimeout(function() {
+                wx.hideLoading()
+                wx.showToast({
+                  title: '注册绑定成功！',
+                  duration: 1500
+                })
+                const db = wx.cloud.database()
+                // 将用户的unionid作为invited查询数据库
+                wx.cloud.callFunction({
+                  name: 'inviteRecord',
+                  data: {
+                    dbName: 'invite_record',
+                    filter: {
+                      invited: wx.getStorageSync('unionid')
+                    }
+                  }
+                }).then(iRRes => {
+                  // 若查到相关记录，说明有邀请关系，则更新此用户邀请关系数据
+                  if (iRRes.result.data && iRRes.result.data.length === 1) {
+                    wx.cloud.callFunction({
+                      name: 'updateInviteRecord',
+                      data: {
+                        record_id: iRRes.result.data[0]._id,
+                        data: {
+                          isReg: true
+                        }
+                      }
+                    }).then(uIRRes => {
+                      // 更新邀请关系成功后，进行页面跳转
+                      wx.navigateBack({
+                        delta: 1
+                      })
+                    })
+                  } else {
+                    // 不存在邀请关系，直接进行页面跳转
+                    wx.navigateBack({
+                      delta: 1
+                    })
+                  }
+                })
+              }, 1500)
+              // request.saveUserInfo(unionid)
+            }).catch(e => {
+              wx.hideLoading()
+              wx.showToast({
+                title: res.result.message,
+                icon: 'none',
+              })
+
+            })
+          }
+        }
+      },
+      getAuthCode() {
+        let that = this
+        if (this.time < 60) {
+          return
+        }
+        const phone = this.phone
+        if (this.checkPhone(phone)) {
+          wx.showLoading({
+            title: '正在发送请求...',
+          })
+          const params = {
+            mobile: phone,
+            bizType: ''
+          }
+          req.sendSms('ajaxSendSms', params).then(res => {
+            wx.showToast({
+              title: '发送成功',
+            })
+            that.timeCounter()
+            that.$apply()
+          })
+            .catch(e => {
+              wx.showToast({
+                title: '发送失败，请稍后再试',
+                icon: 'none'
+              })
+            })
+        }
+      }
+    }
+    events = {}
+
+    onLoad() {
+      wx.showLoading({
+        title: '加载中...',
+      })
+      const that = this
+      const params = {
+      }
+      req.post('loginShow.htm', params).then(res => {
+        that.setData({
+          operationDays: res.operationDays,
+          receivedInterestAll: res.receivedInterestAll,
+          totalBidOrderCount: res.totalBidOrderCount
+        })
+
+        wx.hideLoading()
+      })
+    }
+
+    checkPhone (e) {
+      const regPattern_mobile = /^[1][0-9]{10}$/
+      if (e === null || e === '') {
+        wx.showToast({
+          title: '手机号不能为空',
+          icon: 'none'
+        })
+        return false
+      }
+      if (!regPattern_mobile.test(e)) {
+        wx.showToast({
+          title: '手机号格式不正确！',
+          icon: 'none'
+        })
+        return false
+      }
+      return true
+    }
+    checkFriendCode(e) {
+      const regPattern_mobile = /^[1][0-9]{10}$/
+      if (e === null || e === '') {
+        return true
+      }
+      if (!regPattern_mobile.test(e)) {
+        wx.showToast({
+          title: '推荐人手机号不正确！',
+          icon: 'none'
+        })
+        return false
+      }
+      return true
+    }
+    checkLoginPwd(e) {
+      if (e === null || e === '') {
+        wx.showToast({
+          title: '请输入6-20位登录密码',
+          icon: 'none'
+        })
+        return false
+      }
+      if (e.length < 6 || e.length > 20) {
+        wx.showToast({
+          title: '密码由6-20位字母、数字或特殊符号组成',
+          icon: 'none'
+        })
+        return false
+      }
+      return true
+    }
+    /** 验证密码**/
+    checkPwd(e) {
+      const regpassword = /^(?![0-9]+$)(?![-`!@#$?%^&*+=_]+$)(?![a-zA-Z]+$)[-0-9A-Za-z`!@#$?%^&*+=_]{6,20}$/
+      if (e === null || e === '') {
+        wx.showToast({
+          title: '请输入6-20位登录密码',
+          icon: 'none'
+        })
+        return false
+      }
+      if (!regpassword.test(e)) {
+        wx.showToast({
+          title: '密码由6-20位字母、数字或特殊符号组成',
+          icon: 'none'
+        })
+        return false
+      }
+      return true
+    }
+    /**
+     * 验证短信验证码
+     */
+    checkAuthCode(authCode) {
+      const authCodeReg = /^[0-9]\d*$/
+      if (authCode === null || authCode === '') {
+        wx.showToast({
+          title: '验证码不能为空！',
+          icon: 'none'
+        })
+        return false
+      }
+      if (!authCodeReg.test(authCode)) {
+        wx.showToast({
+          title: '验证码格式错误！',
+          icon: 'none'
+        })
+        return false
+      }
+      return true
+    }
+    timeCounter() {
+      const that = this
+      if (this.time === 0) {
+        this.time = 60
+        this.setData({
+          authCodeText: '获取验证码'
+        })
+      } else {
+        this.setData({
+          authCodeText: '重新发送(' + this.time + ')'
+        })
+        this.time--
+        setTimeout(function() {
+            that.timeCounter()
+            that.$apply()
+          },
+          1000)
+      }
+    }
+  }
+</script>

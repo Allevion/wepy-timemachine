@@ -1,54 +1,24 @@
 <template>
   <view class="container">
     <view class="zan-panel">
-      <navigator class="zan-cell zan-cell--access user-info-cell" url="./profile">
+      <view class="zan-cell zan-cell--access user-info-cell" >
         <view class="zan-cell__icon avatar-container">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
+          <button class="avatar" open-type="getUserInfo"
+                 bindgetuserinfo="getUserInfo" plain="true">
+            <image class="avatar" src='{{avatarUrl}}'/>
+          </button>
         </view>
         <view class="zan-cell__bd">
-          <view class="nickname">{{userInfo.nickName}}</view>
+          <view class="nickname">{{username}}</view>
           <view class="location">{{userInfo.province}} {{userInfo.city}}</view>
         </view>
         <view class="zan-cell__ft"></view>
-      </navigator>
-    </view>
-
-    <view class="zan-panel">
-      <navigator class="zan-cell zan-cell--access" url="./language">
-        <icon class="zan-cell__icon iconfont icon-language"></icon>
-        <view class="zan-cell__bd">Language</view>
-        <view class="zan-cell__ft"></view>
-      </navigator>
-    </view>
-
-
-    <view class="zan-panel">
-      <navigator class="zan-cell zan-cell--access" url="./test">
-        <icon class="zan-cell__icon iconfont icon-language"></icon>
-        <view class="zan-cell__bd">test</view>
-        <view class="zan-cell__ft"></view>
-      </navigator>
-    </view>
-
-    <view class="zan-panel">
-      <navigator class="zan-cell zan-cell--access" url="./feedback">
-        <icon class="zan-cell__icon iconfont icon-feedback2"></icon>
-        <view class="zan-cell__bd">Feedback</view>
-        <view class="zan-cell__ft"></view>
-      </navigator>
-    </view>
-
-    <view class="zan-panel">
-      <navigator class="zan-cell zan-cell--access" url="./about">
-        <icon class="zan-cell__icon iconfont icon-about1"></icon>
-        <view class="zan-cell__bd">About</view>
-        <view class="zan-cell__ft"></view>
-      </navigator>
+      </view>
     </view>
   </view>
 </template>
 
-<style lang="less" scoped>
+<style lang="less" scoped type="text/less">
 .icon-language{
   color: #09f;
 }
@@ -67,6 +37,8 @@
       width: 50px;
       height: 50px;
       border-radius: 4px;
+      border-width: 0px;
+      padding:0px;
     }
   }
   .location {
@@ -80,6 +52,7 @@
 
 <script>
 import wepy from 'wepy'
+import objectUtils from 'src/utils/objectUtils'
 
 export default class Settings extends wepy.page {
   config = {
@@ -87,12 +60,38 @@ export default class Settings extends wepy.page {
   }
 
   data = {
-    userInfo: {
-      nickName: 'loading...'
+    userInfo: {}
+  }
+
+  methods = {
+    getUserInfo(e){
+      this.userInfo = e.detail.userInfo
+      this.$apply()
     }
   }
 
-  methods = {}
+  computed = {
+    avatarUrl(){
+      if (objectUtils.isEmpty(this.userInfo) || objectUtils.isEmpty(this.userInfo.avatarUrl)){
+        return '../assets/images/head.jpeg'
+      } else {
+        return this.userInfo.avatarUrl
+      }
+    },
+    username(){
+      if (objectUtils.isEmpty(this.userInfo.nickName)){
+        if  (objectUtils.isEmpty(this.userInfo.phone)){
+          return '未登录'
+        }else {
+          return this.userInfo.phone
+        }
+      }else {
+        return this.userInfo.nickName
+      }
+
+    }
+
+  }
 
   events = {}
 

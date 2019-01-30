@@ -1,0 +1,128 @@
+<style lang="less" type="text/less" scoped>
+.picker-view-column-line{
+  line-height: 40px;
+  text-align: center;
+}
+</style>
+
+<template>
+  <picker-view
+    indicator-style="height: 40px;"
+    style="width: 100%; height: 200px;background: white"
+    value="{{value}}"
+    bindchange="bindChange"
+  >
+    <picker-view-column>
+      <view wx:for="{{years}}" class="picker-view-column-line">{{item}}年</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view wx:for="{{months}}" class="picker-view-column-line">{{item}}月</view>
+    </picker-view-column>
+    <picker-view-column wx:if="{{withDay}}">
+      <view wx:for="{{days}}" class="picker-view-column-line">{{item}}日</view>
+    </picker-view-column>
+  </picker-view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import objectUtils from 'src/utils/objectUtils'
+  // import timeUtils from 'src/utils/timeUtils'
+  const nowDate = new Date()
+  const years = []
+  const months = []
+  const days = []
+  for (let i = 1990; i <= nowDate.getFullYear(); i++) {
+    years.push(i)
+  }
+  for (let i = 1; i <= 12; i++) {
+    months.push(i)
+  }
+  for (let i = 1; i <= 31; i++) {
+    days.push(i)
+  }
+  export default class DatePicker extends wepy.component {
+    config = {}
+    components = {}
+    props = {
+      date: {
+        type: Date,
+        default: (new Date()),
+        twoWay: true
+      },
+      withDay: true,
+    }
+    data = {
+      years,
+      months,
+      days,
+      bigMonth: [1, 3, 5, 7, 8, 10, 12],
+      value: [9999, 0, 0]
+    }
+    methods = {
+      bindChange(e) {
+        const val = e.detail.value
+        const setYear = this.data.years[val[0]]
+        const setMonth = this.data.months[val[1]]
+        const setDay = this.data.days[val[2]]
+        // console.log(setYear + '年' + setMonth + '月' + setDay + '日')
+      // 闰年
+        if (this.withDay) {
+          if (setMonth === 2) {
+            if (setYear % 4 === 0 && setYear % 100 !== 0) {
+              this.setDays(29)
+            } else {
+              this.setDays(28)
+            }
+          } else {
+            // 大月
+            if (this.contains(this.bigMonth, setMonth)) {
+              this.setDays(31)
+            } else {
+              this.setDays(30)
+            }
+          }
+          this.date.setDate(setDay)
+        }
+        this.date.setYear(setYear)
+        this.date.setMonth(setMonth - 1)
+      }
+    }
+    watch = {
+      // date(curVal) {
+      //   console.log(curVal)
+      //   // this.value[0] = curVal.getFullYear() - 1990
+      //   // this.value[1] = curVal.getMonth()
+      //   // this.value[2] = curVal.getDate() - 1
+      //   // this.$apply()
+      // }
+    }
+    computed = {
+    }
+    events = {}
+    onLoad() {
+      this.value[0] = this.date.getFullYear() - 1990
+      this.value[1] = this.date.getMonth()
+      this.value[2] = this.date.getDate() - 1
+      this.$apply()
+    }
+    // 判断元素是否在一个数组
+    contains (arr, obj) {
+      let i = arr.length
+      while (i--) {
+        if (arr[i] === obj) {
+          return true
+        }
+      }
+      return false
+    }
+    setDays(day) {
+      const temp = []
+      for (let i = 1; i <= day; i++) {
+        temp.push(i)
+      }
+      this.days = temp
+      this.$apply()
+    }
+  }
+</script>

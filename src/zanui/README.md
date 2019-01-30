@@ -1,5 +1,5 @@
 ### ZanUI 组件库本地化
-
+https://github.com/brucx/wepy-zanui-demo
 由于 ZanUI 不支持标准的 wepy 组件化引用方式，只能将其放置入 `src/` 目录中  
 
 但它不属于源码中的一部分，为了方便后续的升级，`请不要尝试修改此文件夹中的任何文件作为个性定制`

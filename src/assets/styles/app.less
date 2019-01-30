@@ -13,26 +13,77 @@
   }
 }
 
-/* override zanui components style */
-.zan-panel {
-  margin-top: 15px;
+.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
 }
 
-.zan-cell {
-  padding: 0 15px;
-  min-height: 44px;
+/* 主轴对齐方式 */
+.dir--left {
+  flex-direction: row;
+}
+.dir--right {
+  flex-direction: row-reverse;
+}
+.dir--top {
+  flex-direction: column;
+}
+.dir--bottom {
+  flex-direction: column-reverse;
 }
 
-.zan-cell__icon{
-  font-size: 25px;
-  margin-right: 10px;
+/* 主轴排列方式 */
+.main--start {
+  justify-content: flex-start;
+}
+.main--end {
+  justify-content: flex-end;
+}
+.main--between {
+  justify-content: space-between;
+}
+.main--center {
+  justify-content: center;
+}
+.main--around {
+  justify-content: space-around;
 }
 
+/* 换行设置 */
+.wrap--nowrap {
+  flex-wrap: nowrap;
+}
+.wrap--wrap {
+  flex-wrap: wrap;
+}
+.wrap--reverse {
+  flex-wrap: wrap-reverse;
+}
+
+
+/* 交叉轴排列方式 */
+.cross--start {
+  align-items: flex-start;
+}
+.cross--end {
+  align-items: flex-end;
+}
+.cross--center {
+  align-items: center;
+}
+.cross--baseline {
+  align-items: baseline;
+}
+.cross--stretch {
+  align-items: stretch;
+}
 
 
 @divider-width: 1px;
 @divider-color: #dddddd;
-@theme-color:#38f;
+@theme-color:#2388ff;
 
 .whole-page{
   height: 100%;
@@ -48,7 +99,7 @@
   font-size: 14px;
 }
 .text-secondary{
-  color:#000000;
+  color:#999;
   font-size: 12px;
 }
 .text-auxiliary{
@@ -64,17 +115,24 @@
   margin-top: 5px;
 }
 
+.margin-horizontal {
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
 .padding-horizontal {
   padding-right: 15px;
   padding-left: 15px;
+}
+.padding-vertical {
+  padding-top: 15px;
+  padding-bottom: 15px;
 }
 
 .content{
   &:extend(.padding-horizontal);
   background: #ffffff;
   font-size: 14px;
-  padding-top: 10px;
-  padding-bottom: 10px;
 
 }
 
@@ -95,4 +153,32 @@
   display: flex;
   justify-content:center;
   align-items: center;
+}
+
+.list_body{
+  &:extend(.content,.flex,.dir--left);
+  min-height: 90rpx;
+  height: 90rpx;
+}
+
+.btn-common{
+  flex-grow: 1;
+  border-radius: 20px;
+  height: 40px;
+  width: 100%;
+  text-align: center;
+  margin: 15px;
+}
+
+.btn-positive{
+  &:extend(.btn-common);
+  background-color: dodgerblue;
+  color: white;
+}
+.btn-nagative{
+  &:extend(.btn-common);
+  background-color: white;
+  color: dodgerblue;
+  border: solid gray;
+  border-width: 1px;
 }

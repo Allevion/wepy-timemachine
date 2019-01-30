@@ -8,8 +8,8 @@
 		"newFeature": true
 	},
 	"compileType": "miniprogram",
-	"appid": "wx1414ac24f75c5e56",
-	"projectname": "timemachine",
+	"appid": "wx84e7d4e1d22739d2",
+	"projectname": "accountant",
 	"miniprogramRoot": "dist/",
 	"condition": {}
 }

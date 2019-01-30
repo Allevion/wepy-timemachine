@@ -56,24 +56,3 @@ export class CommentBean extends BaseBean {
   like = 0;
 }
 
-export class TimelineBean {
-  id = String;
-  user = UserBean;
-  imgs = Array;
-  content = String;
-  createTime = '';
-  like = 0;
-  comment = 0;
-  share = 0;
-}
-
-// export var TimelineBean = {
-//   id: {type: String},
-//   user: UserBean,
-//   imgs: {type: Array},
-//   content: {type: String},
-//   createTime: {type: Date},
-//   like: {type: Number},
-//   comment: {type: Number},
-//   share: {type: Number},
-// };
