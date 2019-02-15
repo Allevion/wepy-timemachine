@@ -23,18 +23,30 @@ export class BaseBean {
 * */
 export class PageListBean extends BaseBean {
   init() {
-    this.page = {finished: false, index: -1}
+    this.pager = {end: false, pageIndex: -1, pageCount: 999}
     this.listData = []
   }
 
   getNextIndex() {
-    return Number(this.page.index) + 1
+    return Number(this.pager.pageIndex) + 1
   }
 
   appendData(pageListBean) {
-    this.listData = this.listData.concat(pageListBean.listData)
-    this.page.finished = !pageListBean.page.hasMore
-    this.page.index = pageListBean.page.index
+    this.listData = this.listData.concat(pageListBean.result)
+    this.pager.end = !pageListBean.pager.hasMore
+    this.pager.pageIndex = pageListBean.pager.pageIndex
+    this.pager.pageCount = pageListBean.pager.pageCount
+  }
+  isListEnd() {
+    if (this.pager) {
+      if (this.pager.pageIndex >= this.pager.pageCount) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return true
+    }
   }
 }
 
@@ -55,4 +67,3 @@ export class CommentBean extends BaseBean {
   createTime = '';
   like = 0;
 }
-

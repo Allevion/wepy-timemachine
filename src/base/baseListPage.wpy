@@ -7,10 +7,18 @@ export default class BaseListPage extends Basepage {
     pageData: new PageListBean()
   }
 
+  computed = {
+    isListEnd() {
+      console.debug('components isListEnd:' + this.pageData.isListEnd())
+      return this.pageData.isListEnd()
+    }
+  }
   // methods = {}
   //
   // events = {}
-
+  // getListData(){
+  //
+  // }
   afterRequstData(res) {
     this.pageData.appendData(new PageListBean(res))
     // this.refreshing = false
@@ -21,7 +29,7 @@ export default class BaseListPage extends Basepage {
       this.$broadcast('loadingEnd', false)
     } else {
       this.$broadcast('updatePageStatus', this.PAGE_SUCCESS)
-      if (this.pageData.page.finished) {
+      if (this.pageData.pager.end) {
         this.$broadcast('loadingEnd', true)
       }
     }
@@ -30,6 +38,7 @@ export default class BaseListPage extends Basepage {
   }
   onPullDownRefresh() {
     // if (this.refreshing || this.loadingMore) return false
+    console.debug('base list onPullDownRefresh')
     this.pageData.init()
     this.$broadcast('loadingEnd', false)
     // this.refreshing = true
@@ -39,7 +48,8 @@ export default class BaseListPage extends Basepage {
   }
 
   onReachBottom() {
-    if (this.pageData.page.finished) return false
+    console.debug('base list onReachBottom')
+    if (this.pageData.isListEnd()) return false
     // this.loadingMore = true
     this.$broadcast('loadingMore', true)
     // this.$apply()

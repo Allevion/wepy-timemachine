@@ -57,7 +57,7 @@ export default class Basepage extends wepy.mixin {
   events = {}
 
   onLoad() {
-    // console.warn('base onload')
+    console.debug('base onload')
     // this.initData()
     this.requestData()
   }

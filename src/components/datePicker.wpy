@@ -13,13 +13,13 @@
     bindchange="bindChange"
   >
     <picker-view-column>
-      <view wx:for="{{years}}" class="picker-view-column-line">{{item}}年</view>
+      <view wx:for="{{years}}" class="picker-view-column-line" wx:key="key">{{item}}年</view>
     </picker-view-column>
     <picker-view-column>
-      <view wx:for="{{months}}" class="picker-view-column-line">{{item}}月</view>
+      <view wx:for="{{months}}" class="picker-view-column-line" wx:key="key">{{item}}月</view>
     </picker-view-column>
     <picker-view-column wx:if="{{withDay}}">
-      <view wx:for="{{days}}" class="picker-view-column-line">{{item}}日</view>
+      <view wx:for="{{days}}" class="picker-view-column-line" wx:key="key">{{item}}日</view>
     </picker-view-column>
   </picker-view>
 </template>
@@ -57,10 +57,12 @@
       months,
       days,
       bigMonth: [1, 3, 5, 7, 8, 10, 12],
-      value: [9999, 0, 0]
+      value: [9999, 0, 0],
+      scrollChange: false
     }
     methods = {
       bindChange(e) {
+        this.scrollChange = true
         const val = e.detail.value
         const setYear = this.data.years[val[0]]
         const setMonth = this.data.months[val[1]]
@@ -82,29 +84,32 @@
               this.setDays(30)
             }
           }
+          this.scrollChange = true
           this.date.setDate(setDay)
         }
+        this.scrollChange = true
         this.date.setYear(setYear)
+        this.scrollChange = true
         this.date.setMonth(setMonth - 1)
       }
     }
     watch = {
-      // date(curVal) {
-      //   console.log(curVal)
-      //   // this.value[0] = curVal.getFullYear() - 1990
-      //   // this.value[1] = curVal.getMonth()
-      //   // this.value[2] = curVal.getDate() - 1
-      //   // this.$apply()
-      // }
+      date(curVal) {
+        if (!this.scrollChange) {
+          console.log('watch date:' + curVal)
+          console.log(this.value)
+          this.value[0] = curVal.getFullYear() - 1990
+          this.value[1] = curVal.getMonth()
+          this.value[2] = curVal.getDate() - 1
+          console.log(this.value)
+        }
+        this.scrollChange = false
+      }
     }
     computed = {
     }
     events = {}
     onLoad() {
-      this.value[0] = this.date.getFullYear() - 1990
-      this.value[1] = this.date.getMonth()
-      this.value[2] = this.date.getDate() - 1
-      this.$apply()
     }
     // 判断元素是否在一个数组
     contains (arr, obj) {

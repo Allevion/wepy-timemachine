@@ -16,7 +16,6 @@
 
 <script>
 import wepy from 'wepy'
-import Loadmore from 'kai-ui/Loadmore'
 
 export default class Basepage extends wepy.component {
   PAGE_ERROR = 'PAGE_ERROR'
@@ -42,7 +41,6 @@ export default class Basepage extends wepy.component {
   // }
 
   components = {
-    loadmore: Loadmore
   }
 
   methods = {

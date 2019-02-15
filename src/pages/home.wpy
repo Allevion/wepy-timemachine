@@ -1,0 +1,87 @@
+<style lang="less" scoped type="text/less">
+  .highlight_color{
+    color : orangered;
+  }
+</style>
+
+<template>
+  <view class="container">
+
+    <view class="content" style="text-align: center;position: relative;">
+      <view style="position: absolute;width: 100%;margin-top: 40px" >
+        <view style="text-align: center;font-size: 10px;color: white;">今日提成(元)</view>
+        <view style="text-align: center;font-size: 28px;color: white;" class="margin-vertical-small">154(元)</view>
+      </view>
+      <image class="margin-vertical" style="width: 100%;" mode="widthFix" src="../assets/images/index_today_bg.png">
+      </image>
+    </view>
+
+    <view class="list_body margin-vertical">
+      <view class="" >本月提成(元)：</view>
+      <view class="highlight_color" style="flex-grow: 1;margin-left: 5px">一个亿</view>
+      <navigator class="text-secondary" url="record" hover-class="navigator-hover">查看明细</navigator>
+      <wxc-icon type="arrow-right" style="margin-left: 5px" color="#999"/>
+    </view>
+
+    <view class="divider-horizontal margin-horizontal"/>
+
+    <view class="content flex main--around">
+      <view class="padding-vertical">
+        <view >本月出借年化总额(元)</view>
+        <view style="text-align: center" class="highlight_color margin-vertical-small">十个亿</view>
+      </view>
+      <view class="padding-vertical">
+        <view>本月出借笔数(笔)</view>
+        <view style="text-align: center" class="highlight_color margin-vertical-small">34</view>
+      </view>
+    </view>
+
+    <view class="list_body flex dir--left margin-vertical">
+      <image src="../assets/images/total.png" style="height: 25px;width: 25px"/>
+      <view  style="flex-grow: 1;margin-left: 5px">累计总收益</view>
+      <view class="highlight_color">一个亿</view>
+    </view>
+
+    <view class="text-secondary margin-vertical margin-horizontal">
+      <text>
+        规则说明：
+        1. 本小程序自2019年1月1日起统计数据，且仅统计个人客户；
+        2. 出借金额统一按年化金额展示，年化金额=实际出借金额*标的期限/12，如需了解标的详情及其他信息，请前往数据系统查询；
+        3. 存量复投部分，若：
+        (1) 当月复投率≥85%，则可获得全部存量复投提成；
+        (2) 75%≤当月复投率＜85%，则存量复投提成系数为0.8；
+        (3) 当月复投率＜75%，则当月存量复投不计提成。
+      </text>
+    </view>
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+// import req from '@/network'
+
+export default class Home extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    usingComponents: {
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index',
+      'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
+      'wxc-list': '../../packages/@minui/wxc-list/dist/index'
+    }
+  }
+
+  methods = {
+  }
+
+  events = {}
+
+  onLoad() {
+  }
+  data = {
+  }
+
+  components = {
+  }
+}
+</script>

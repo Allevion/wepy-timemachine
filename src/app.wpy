@@ -1,9 +1,6 @@
 <style lang='less'>
-@import "./zanui/index.wxss";
-@import "./assets/fonts/iconfont.less";
 @import "./assets/styles/app.less";
 @import "./assets/styles/utils.less";
-/*@import '../node_modules/kai-ui/src/less/index';*/
 page {
   height: 100%;
   background-color: #efeff4;
@@ -20,6 +17,7 @@ import configStore from './store'
 import * as interceptor from '@/network/interceptor'
 import { setStore } from 'wepy-redux'
 import { baseUrl } from '@/config'
+import 'wepy-async-function'
 
 const store = configStore()
 setStore(store)
@@ -27,8 +25,9 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/record',
       'pages/index',
+      'pages/home',
+      'pages/record',
       'pages/settings',
       'pages/loginReg',
     ],
@@ -38,28 +37,28 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#2388ff',
       navigationBarTitleText: '妈妈钱包助手',
       navigationBarTextStyle: 'white'
-    },
-    tabBar: {
-      color: '#929292',
-      selectedColor: '#2388ff',
-      backgroundColor: '#f7f7f8',
-      borderStyle: 'white',
-      list: [{
-        pagePath: 'pages/record',
-        text: '首页',
-        iconPath: 'assets/images/home-outline.png',
-        selectedIconPath: 'assets/images/home-selected.png'
-      }, {
-        pagePath: 'pages/settings',
-        text: '我的',
-        iconPath: 'assets/images/settings-outline.png',
-        selectedIconPath: 'assets/images/settings-selected.png'
-      }]
     }
+    // tabBar: {
+    //   color: '#929292',
+    //   selectedColor: '#2388ff',
+    //   backgroundColor: '#f7f7f8',
+    //   borderStyle: 'white',
+    //   list: [{
+    //     pagePath: 'pages/home',
+    //     text: '首页',
+    //     iconPath: 'assets/images/home-outline.png',
+    //     selectedIconPath: 'assets/images/home-selected.png'
+    //   }, {
+    //     pagePath: 'pages/record',
+    //     text: '我的',
+    //     iconPath: 'assets/images/settings-outline.png',
+    //     selectedIconPath: 'assets/images/settings-selected.png'
+    //   }]
+    // }
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
   }
 
   constructor () {
@@ -70,40 +69,15 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
+    wx.cloud.init()
     req.baseUrl(baseUrl).interceptor(interceptor.request, interceptor.response)
-    wx.login({
-      success: res => {
-        const code = res.code
-        if (code) {
-          // req.get('/user/getWechatCodeXiaochengxu?wxcode=' + code).then(res => {
-          //   wx.getUserInfo({
-          //     success: function(res2) {
-          //       if (res2.errMsg === 'getUserInfo:ok') {
-          //         res2.session_key = res.session_key
-          //         req.post('/user/loginByWechatXiaochengxu', res2).then(res3 => {
-          //           console.warn(res3)
-          //         })
-          //       }
-          //     }
-          //   })
-          // }).catch(error => {
-          //   console.warn(error)
-          // })
-        }
+    try {
+      const value = wx.getStorageSync('userInfo')
+      if (value) {
+        this.globalData.userInfo = value
       }
-    })
-  }
-
-  getUserInfo() {
-    if (this.globalData.userInfo) {
-      return new Promise((resolve, reject) => {
-        resolve(this.globalData.userInfo)
-      })
-    } else {
-      return wepy.getUserInfo().then(res => {
-        this.globalData.userInfo = res.userInfo
-        return res.userInfo
-      })
+    } catch (e) {
+      // Do something when catch error
     }
   }
 }

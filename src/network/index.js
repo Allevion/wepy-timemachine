@@ -31,6 +31,7 @@ class Request {
 
   request(data) {
     const { url, method, header, params } = this.interceptors.request ? this.interceptors.request(data) : data
+    console.debug(url + params)
 
     const url2 = (this._baseUrl || '') + url
     // 参数处理
@@ -77,20 +78,20 @@ class Request {
       signStr = signStr + key
       signStr = signStr + paramsFinal[key]
     }
-    console.log('signStr: ' + signStr)
+    // console.log('signStr: ' + signStr)
     // step2:字符串加盐并获取MD5值
     signStr = signStr + MD5_SALT
     const sign = md5(signStr)
-    console.log('sign: ' + sign)
+    // console.log('sign: ' + sign)
     // step3:加上sign并给所有参数的值base64处理
     paramsFinal['sign'] = sign
     for (const key of Object.keys(paramsFinal)) {
       // console.log('key: ' + key)
-      console.log('paramsFinal[key]: ' + paramsFinal[key])
+      // console.log('paramsFinal[key]: ' + paramsFinal[key])
       paramsFinal[key] = encodeURIComponent(paramsFinal[key])
       paramsFinal[key] = Base64.encode((paramsFinal[key]))
 
-      console.log('paramsFinal[key]: ' + paramsFinal[key])
+      // console.log('paramsFinal[key]: ' + paramsFinal[key])
     }
     console.log(paramsFinal)
     return wepy.request({
@@ -140,7 +141,7 @@ class Request {
   }
 
   checkBase64(response) {
-    console.log(response)
+    // console.log(response)
     return Base64.decode(response.responseParameter)
   }
 

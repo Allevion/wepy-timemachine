@@ -180,7 +180,6 @@
 <script>
   import wepy from 'wepy'
   import req from '@/network'
-  import rsaUtil from 'src/utils/rsaUtil.js'
 
   export default class LoginReg extends wepy.page {
     config = {
@@ -221,76 +220,81 @@
         this.friendCode = value
       },
       phoneInput(e) {
-        let that = this
+        const that = this
         const phone = e.detail.value
         this.phone = phone
-        const regPattern_mobile = /^[1][0-9]{10}$/
-        if (regPattern_mobile.test(phone)) {
+        const regPatternMobile = /^[1][0-9]{10}$/
+        if (regPatternMobile.test(phone)) {
           const param = {
             mobile: phone
           }
           req.post('checkLoginNameExt.htm', param)
             .then(res => {
-              that.showReg= true
-              that.showLogin= false
-              that.btnText= '注册绑定'
+              that.showReg = true
+              that.showLogin = false
+              that.btnText = '注册绑定'
               that.$apply()
-          }).catch(e => {
-            if(e.code === '00040001'){
-              that.showReg= false
-              that.showLogin= true
-              that.btnText= '绑定'
-              that.$apply()
-            }
-          })
-
+            }).catch(e => {
+              if (e.code === '00040001') {
+                that.showReg = false
+                that.showLogin = true
+                that.btnText = '绑定'
+                that.$apply()
+              }
+            })
         } else {
-          that.showReg= false
-          that.showLogin= false
-          that.btnText= '绑定'
+          that.showReg = false
+          that.showLogin = false
+          that.btnText = '绑定'
           that.$apply()
-
         }
       },
 
-      bindMama() {
-        // const unionid = wx.getStorageSync('unionid')
+      async bindMama() {
+        const that = this
+        const unionid = wepy.$instance.globalData.userInfo.unionid
+        const pwdRes = await wx.cloud.callFunction({
+          name: 'encrypt',
+          data: {
+            data: that.loginPwd
+          }
+        })
         if (this.showLogin) { // 登录
           // if (this.checkPhone(this.phone) && this.checkLoginPwd(this.loginPwd)) {
             // wx.showLoading({
             //   title: '登录中',
             // })
-            var params = {
-              mobile: this.phone,
-              password: rsaUtil.default.encrypt(this.loginPwd),
-              // password:'Wo/TsoxBlwW/WZigK5ZcvYDwH+3no44GxN++dqIbRZzQFsCJsY+TqmxNUEkt0HMWDWQ2T+f7YUrWzEGUnsjP8QbemiuRo0Z+ClOFKW0xqYBHOid9bN76q/3VOJWDYLpkIga5gAmmNRqVeesyqxrwEMh6rsHd26b7wEMxvjjhz+I=',
-              // unionid: unionid,
-              device: '4'
-            }
-            req.post('login.htm', params).then(res => {
-              wx.hideLoading()
-              wx.setStorageSync('memberInfo', res)
-              wx.navigateBack({
-                delta: 1
-              })
+          const params = {
+            mobile: that.phone,
+            password: pwdRes.result,
+            unionid: unionid,
+            device: '4'
+          }
+          req.post('miniprogramLogin.htm', params).then(res => {
+            wx.hideLoading()
+            wx.setStorageSync('memberInfo', res)
+            wx.navigateBack({
+              delta: 1
+            })
               // todo
               // request.saveUserInfo(unionid)
-            }).catch(e => {
-              wx.showToast({
-                title: res.result.message,
-                icon: 'none',
-              })
+          }).catch(e => {
+            wx.showToast({
+              title: e.msg,
+              icon: 'none',
             })
+          })
+
           // }
         } else { // 注册
           wx.showLoading({
             title: '正在注册...',
           })
           if (this.checkPhone(this.phone) && this.checkPwd(this.regPwd) && this.checkAuthCode(this.authCode) && this.checkFriendCode(this.friendCode)) {
-            var params = {
+            const params = {
               service: 'register',
               mobile: this.phone,
-              password: this.regPwd,
+              password: pwdRes.result,
               unionid: unionid,
               phoneVerifyCode: this.authCode,
               friendCode: this.friendCode,
@@ -307,55 +311,57 @@
                   title: '注册绑定成功！',
                   duration: 1500
                 })
-                const db = wx.cloud.database()
-                // 将用户的unionid作为invited查询数据库
-                wx.cloud.callFunction({
-                  name: 'inviteRecord',
-                  data: {
-                    dbName: 'invite_record',
-                    filter: {
-                      invited: wx.getStorageSync('unionid')
-                    }
-                  }
-                }).then(iRRes => {
-                  // 若查到相关记录，说明有邀请关系，则更新此用户邀请关系数据
-                  if (iRRes.result.data && iRRes.result.data.length === 1) {
-                    wx.cloud.callFunction({
-                      name: 'updateInviteRecord',
-                      data: {
-                        record_id: iRRes.result.data[0]._id,
-                        data: {
-                          isReg: true
-                        }
-                      }
-                    }).then(uIRRes => {
-                      // 更新邀请关系成功后，进行页面跳转
-                      wx.navigateBack({
-                        delta: 1
-                      })
-                    })
-                  } else {
-                    // 不存在邀请关系，直接进行页面跳转
-                    wx.navigateBack({
-                      delta: 1
-                    })
-                  }
+                wx.navigateTo({
+                  url: 'home'
                 })
+                // const db = wx.cloud.database()
+                // 将用户的unionid作为invited查询数据库
+                // wx.cloud.callFunction({
+                //   name: 'inviteRecord',
+                //   data: {
+                //     dbName: 'invite_record',
+                //     filter: {
+                //       invited: wx.getStorageSync('unionid')
+                //     }
+                //   }
+                // }).then(iRRes => {
+                //   // 若查到相关记录，说明有邀请关系，则更新此用户邀请关系数据
+                //   if (iRRes.result.data && iRRes.result.data.length === 1) {
+                //     wx.cloud.callFunction({
+                //       name: 'updateInviteRecord',
+                //       data: {
+                //         record_id: iRRes.result.data[0]._id,
+                //         data: {
+                //           isReg: true
+                //         }
+                //       }
+                //     }).then(uIRRes => {
+                //       // 更新邀请关系成功后，进行页面跳转
+                //       wx.navigateBack({
+                //         delta: 1
+                //       })
+                //     })
+                //   } else {
+                //     // 不存在邀请关系，直接进行页面跳转
+                //     wx.navigateBack({
+                //       delta: 1
+                //     })
+                //   }
+                // })
               }, 1500)
               // request.saveUserInfo(unionid)
             }).catch(e => {
               wx.hideLoading()
               wx.showToast({
-                title: res.result.message,
+                title: e.msg,
                 icon: 'none',
               })
-
             })
           }
         }
       },
       getAuthCode() {
-        let that = this
+        const that = this
         if (this.time < 60) {
           return
         }
@@ -387,6 +393,7 @@
     events = {}
 
     onLoad() {
+      console.log(' user openid: ', wepy.$instance.globalData.openid)
       wx.showLoading({
         title: '加载中...',
       })
@@ -405,7 +412,7 @@
     }
 
     checkPhone (e) {
-      const regPattern_mobile = /^[1][0-9]{10}$/
+      const regPatternMobile = /^[1][0-9]{10}$/
       if (e === null || e === '') {
         wx.showToast({
           title: '手机号不能为空',
@@ -413,7 +420,7 @@
         })
         return false
       }
-      if (!regPattern_mobile.test(e)) {
+      if (!regPatternMobile.test(e)) {
         wx.showToast({
           title: '手机号格式不正确！',
           icon: 'none'
@@ -423,11 +430,11 @@
       return true
     }
     checkFriendCode(e) {
-      const regPattern_mobile = /^[1][0-9]{10}$/
+      const regPatternMobile = /^[1][0-9]{10}$/
       if (e === null || e === '') {
         return true
       }
-      if (!regPattern_mobile.test(e)) {
+      if (!regPatternMobile.test(e)) {
         wx.showToast({
           title: '推荐人手机号不正确！',
           icon: 'none'
@@ -506,9 +513,9 @@
         })
         this.time--
         setTimeout(function() {
-            that.timeCounter()
-            that.$apply()
-          },
+          that.timeCounter()
+          that.$apply()
+        },
           1000)
       }
     }

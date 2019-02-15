@@ -7,6 +7,10 @@
     margin: 15px;
     color: dodgerblue;
   }
+  .record-item{
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
 </style>
 
 <template>
@@ -32,27 +36,49 @@
         <button class="btn-positive" @tap="comfirm">确定</button>
       </view>
     </view>
+    <view class="list margin-vertical">
+      <repeat for="{{pageData.listData}}" index="index" item="item" key="key" >
+        <!--<timeline :datas.sync="item"></timeline>-->
+        <view class="record-item main--between padding-horizontal list_body">
+          <view style="align-items: end">
+            <view class="text-primary" style="font-size: 12px">账号</view>
+            <view class="text-secondary margin-vertical-small">描述</view>
+          </view>
+          <view style="align-items: end">
+            <view class="text-highlight">金额</view>
+            <view class="text-secondary margin-vertical-small">日期</view>
+          </view>
+        </view>
+        <view class="divider-horizontal"></view>
+      </repeat>
+      <!--<loadmore :isEnd="true" ></loadmore>-->
+      <wxc-loadmore is-end="{{isListEnd}}"></wxc-loadmore>
+    </view>
   </basepage>
 </template>
 
 <script>
-  import Basepage from 'src/base/basepage'
   import basepage from 'src/components/basepage'
+  import loadmore from 'src/components/loadmore'
   import datePicker from 'src/components/datePicker'
   import wepy from 'wepy'
   import timeUtils from 'src/utils/timeUtils'
   import objectUtils from '../utils/objectUtils'
+  import req from '@/network'
+  import BaseListPage from '@/base/baseListPage'
   export default class Record extends wepy.page {
-    mixins = [Basepage]
+    mixins = [BaseListPage]
     config = {
       navigationBarTitleText: 'Record',
       usingComponents: {
-        'wxc-toast': '../../packages/@minui/wxc-toast/dist/index'
+        'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
+        'wxc-loadmore': '../../packages/@minui/wxc-loadmore/dist/index'
       }
     }
     components = {
       basepage: basepage,
-      datePicker: datePicker
+      datePicker: datePicker,
+      loadmore: loadmore
     }
     props = {}
     data = {
@@ -80,14 +106,12 @@
       changeMode() {
         if (this.selectMode) {
           this.dayMode = !this.dayMode
-          if (this.dayMode) {
-            this.changeModeStr = '按天选择'
-          } else {
-            this.changeModeStr = '按月选择'
-          }
         } else {
           this.selectMode = true
-          this.dayMode = false
+        }
+        if (this.dayMode) {
+          this.changeModeStr = '按天选择'
+        } else {
           this.changeModeStr = '按月选择'
         }
       },
@@ -101,6 +125,7 @@
         } else {
           this.changeModeStr = this.month
         }
+        this.$wxpage.onPullDownRefresh()
       },
       reset() {
         this.dayChangeFocus = 'month'
@@ -111,23 +136,21 @@
     computed = {
       getDate () {
         return timeUtils.formatDate(this.date, 'yyyy-MM-dd')
+      },
+      isListEnd() {
+        console.debug('components isListEnd:' + this.pageData)
+        return this.pageData.isListEnd()
       }
     }
     events = {}
     watch = {
       date(curVal, oldVal) {
-        let newDate = ''
-        if (this.dayMode) {
-          newDate = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
-        } else {
-          newDate = timeUtils.formatDate(curVal, 'yyyy-MM')
-        }
         if (this.dayChangeFocus === 'month') {
-          this.month = newDate
+          this.month = timeUtils.formatDate(curVal, 'yyyy-MM')
         } else if (this.dayChangeFocus === 'day1') {
-          this.dayBegin = newDate
+          this.dayBegin = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
         } else if (this.dayChangeFocus === 'day2') {
-          this.dayEnd = newDate
+          this.dayEnd = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
         }
       },
       dayMode(curVal, oldVal) {
@@ -151,6 +174,17 @@
 
     onLoad() {
       // console.log((new Date()).getTime())
+    }
+
+    requestData() {
+      const params = {
+        pageIndex: 1,
+        pageSize: 4
+      }
+      req.post('creditList.htm', params)
+        .then(res => {
+          this.afterRequstData(res)
+        })
     }
   }
 </script>
