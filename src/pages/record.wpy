@@ -17,7 +17,8 @@
   <basepage class="basepage">
     <view class="list_body">
       <view @tap="changeMode">{{changeModeStr}}</view>
-      <image src="{{changeModeIcon}}" style="width: 20px;height: 20px"/>
+      <image wx:if="{{selectMode}}" class="margin-horizontal-small" style="width: 15px;height: 10px" src="../assets/images/change.png"/>
+      <image wx:else class="margin-horizontal-small" style="width: 15px;height: 10px" src="../assets/images/down-arrow.png"/>
     </view>
     <view class="divider-horizontal"/>
     <view wx:if="{{selectMode}}" class="content">
@@ -30,9 +31,9 @@
         <view class="day-show" style="margin:15px auto">{{month}}</view>
       </view>
       <view class="divider-horizontal"/>
-      <datePicker :date="date" :withDay.sync="dayMode"></datePicker>
+      <datePicker id="datepicker" :selectDate.sync="selectDate" :withDay.sync="dayMode" ></datePicker>
       <view class="flex">
-        <button class="btn-nagative" @tap="reset">重置</button>
+        <button class="btn-nagative" @tap="resetDate">重置</button>
         <button class="btn-positive" @tap="comfirm">确定</button>
       </view>
     </view>
@@ -51,8 +52,8 @@
         </view>
         <view class="divider-horizontal"></view>
       </repeat>
-      <!--<loadmore :isEnd="true" ></loadmore>-->
-      <wxc-loadmore is-end="{{isListEnd}}"></wxc-loadmore>
+      <loadmore :isEnd.sync="isListEnd" ></loadmore>
+      <!--<wxc-loadmore is-end="{{isListEnd}}"></wxc-loadmore>-->
     </view>
   </basepage>
 </template>
@@ -66,13 +67,14 @@
   import objectUtils from '../utils/objectUtils'
   import req from '@/network'
   import BaseListPage from '@/base/baseListPage'
+  import Basepage from '@/base/basepage'
   export default class Record extends wepy.page {
-    mixins = [BaseListPage]
+    mixins = [BaseListPage, Basepage]
     config = {
       navigationBarTitleText: 'Record',
       usingComponents: {
         'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
-        'wxc-loadmore': '../../packages/@minui/wxc-loadmore/dist/index'
+        // 'wxc-loadmore': '../../packages/@minui/wxc-loadmore/dist/index'
       }
     }
     components = {
@@ -82,26 +84,30 @@
     }
     props = {}
     data = {
+      test: 'ddd',
       changeModeStr: timeUtils.formatDate(new Date(), 'yyyy-MM'),
       changeModeIcon: '',
-      date: new Date(),
+      selectDate: timeUtils.formatDate(new Date(), 'yyyy-MM-dd'),
       selectMode: false,
       dayChangeFocus: 'month',
       dayMode: false,
       dayBegin: timeUtils.formatDate(new Date(), 'yyyy-MM-dd'),
-      dayEnd: '',
+      dayEnd: null,
       month: timeUtils.formatDate(new Date(), 'yyyy-MM'),
     }
     methods = {
       dayBeginClick() {
-        this.date = timeUtils.stringToDate(this.dayBegin)
+        this.selectDate = this.dayBegin
         this.dayChangeFocus = 'day1'
+        this.$apply()
       },
       dayEndClick() {
-        if (!objectUtils.isEmpty(this.dayEnd)) {
-          this.date = timeUtils.stringToDate(this.dayEnd)
+        if (!this.dayEnd) {
+          this.dayEnd = timeUtils.formatDate(new Date(), 'yyyy-MM-dd')
+          this.selectDate = this.dayEnd
         }
         this.dayChangeFocus = 'day2'
+        this.$apply()
       },
       changeMode() {
         if (this.selectMode) {
@@ -114,6 +120,7 @@
         } else {
           this.changeModeStr = '按月选择'
         }
+        this.$apply()
       },
       comfirm() {
         this.selectMode = false
@@ -125,57 +132,61 @@
         } else {
           this.changeModeStr = this.month
         }
+        this.$apply()
         this.$wxpage.onPullDownRefresh()
       },
-      reset() {
-        this.dayChangeFocus = 'month'
+      resetDate() {
+        this.dayEnd = null
         this.month = timeUtils.formatDate(new Date(), 'yyyy-MM')
         this.dayMode = false
+        this.$apply()
       }
     }
     computed = {
-      getDate () {
-        return timeUtils.formatDate(this.date, 'yyyy-MM-dd')
-      },
-      isListEnd() {
-        console.debug('components isListEnd:' + this.pageData)
-        return this.pageData.isListEnd()
-      }
+      // getDate () {
+      //   // return timeUtils.formatDate(this.selectDate, 'yyyy-MM-dd')
+      //   return timeUtils.formatDate(this.selectDate, 'yyyy-MM-dd')
+      // }
     }
     events = {}
     watch = {
-      date(curVal, oldVal) {
+      selectDate(curVal) {
+        console.debug('record selectDate change:' + curVal)
         if (this.dayChangeFocus === 'month') {
-          this.month = timeUtils.formatDate(curVal, 'yyyy-MM')
+          this.month = curVal.substr(0, 7)
         } else if (this.dayChangeFocus === 'day1') {
-          this.dayBegin = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
+          this.dayBegin = curVal
         } else if (this.dayChangeFocus === 'day2') {
-          this.dayEnd = timeUtils.formatDate(curVal, 'yyyy-MM-dd')
+          this.dayEnd = curVal
         }
+        this.applyAsync()
       },
-      dayMode(curVal, oldVal) {
+      dayMode(curVal) {
         if (curVal === true) {
           this.dayChangeFocus = 'day1'
         } else {
           this.dayChangeFocus = 'month'
         }
+        this.applyAsync()
       },
       dayChangeFocus(curVal) {
-        console.log('change focus')
+        console.debug('change focus' + curVal)
         if (curVal === 'month') {
-          this.date = timeUtils.stringToDate(this.month)
+          console.debug('change focus this.month ' + this.month)
+          this.selectDate = this.month + '-01'
         } else if (curVal === 'day1') {
-          this.date = timeUtils.stringToDate(this.dayBegin)
+          console.debug('change focus this.dayBegin ' + this.dayBegin)
+          this.selectDate = this.dayBegin
         } else if (curVal === 'day2') {
-          this.date = timeUtils.stringToDate(this.dayEnd)
+          console.debug('change focus this.dayEnd ' + this.dayEnd)
+          this.selectDate = this.dayEnd
         }
+        this.applyAsync()
       }
     }
-
     onLoad() {
       // console.log((new Date()).getTime())
     }
-
     requestData() {
       const params = {
         pageIndex: 1,

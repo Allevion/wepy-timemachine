@@ -1,15 +1,15 @@
 <script>
-import Basepage from '@/base/basepage'
 import {PageListBean} from '@/models/models'
+import wepy from 'wepy'
 
-export default class BaseListPage extends Basepage {
+export default class BaseListPage extends wepy.mixin {
   data = {
     pageData: new PageListBean()
   }
 
   computed = {
     isListEnd() {
-      console.debug('components isListEnd:' + this.pageData.isListEnd())
+      // console.debug('components isListEnd:' + this.pageData.isListEnd())
       return this.pageData.isListEnd()
     }
   }
@@ -55,5 +55,12 @@ export default class BaseListPage extends Basepage {
     // this.$apply()
     this.requestData()
   }
+  // applyAsync() {
+  //   const that = this
+  //   setTimeout(function() {
+  //     // f1 的代码
+  //     that.$apply()
+  //   }, 0)
+  // }
 }
 </script>

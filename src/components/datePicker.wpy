@@ -6,28 +6,31 @@
 </style>
 
 <template>
-  <picker-view
-    indicator-style="height: 40px;"
-    style="width: 100%; height: 200px;background: white"
-    value="{{value}}"
-    bindchange="bindChange"
-  >
-    <picker-view-column>
-      <view wx:for="{{years}}" class="picker-view-column-line" wx:key="key">{{item}}年</view>
-    </picker-view-column>
-    <picker-view-column>
-      <view wx:for="{{months}}" class="picker-view-column-line" wx:key="key">{{item}}月</view>
-    </picker-view-column>
-    <picker-view-column wx:if="{{withDay}}">
-      <view wx:for="{{days}}" class="picker-view-column-line" wx:key="key">{{item}}日</view>
-    </picker-view-column>
-  </picker-view>
+  <view>
+    <!--<view>{{value}}</view>-->
+    <picker-view
+      indicator-style="height: 40px;"
+      style="width: 100%; height: 200px;background: white"
+      value="{{value}}"
+      bindchange="bindChange"
+    >
+      <picker-view-column>
+        <view wx:for="{{years}}" class="picker-view-column-line" wx:key="key">{{item}}年</view>
+      </picker-view-column>
+      <picker-view-column>
+        <view wx:for="{{months}}" class="picker-view-column-line" wx:key="key">{{item}}月</view>
+      </picker-view-column>
+      <picker-view-column wx:if="{{withDay}}">
+        <view wx:for="{{days}}" class="picker-view-column-line" wx:key="key">{{item}}日</view>
+      </picker-view-column>
+    </picker-view>
+  </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   // import objectUtils from 'src/utils/objectUtils'
-  // import timeUtils from 'src/utils/timeUtils'
+  import timeUtils from 'src/utils/timeUtils'
   const nowDate = new Date()
   const years = []
   const months = []
@@ -42,15 +45,23 @@
     days.push(i)
   }
   export default class DatePicker extends wepy.component {
-    config = {}
+    config = {
+      component: true,
+      usingComponents: {
+        'datePicker': '../components/datePicker',
+      }
+    }
     components = {}
     props = {
-      date: {
-        type: Date,
-        default: (new Date()),
+      selectDate: {
+        type: String,
+        // default: (new Date()),
         twoWay: true
       },
       withDay: true,
+      onDateChange: {
+        type: Function
+      }
     }
     data = {
       years,
@@ -64,43 +75,53 @@
       bindChange(e) {
         this.scrollChange = true
         const val = e.detail.value
-        const setYear = this.data.years[val[0]]
-        const setMonth = this.data.months[val[1]]
-        const setDay = this.data.days[val[2]]
+        this.value = val
+        const setYear = this.years[val[0]]
+        const setMonth = this.months[val[1]]
+        const setDay = this.days[val[2]]
         // console.log(setYear + '年' + setMonth + '月' + setDay + '日')
-      // 闰年
-        if (this.withDay) {
-          if (setMonth === 2) {
-            if (setYear % 4 === 0 && setYear % 100 !== 0) {
-              this.setDays(29)
-            } else {
-              this.setDays(28)
-            }
+        // 闰年
+        if (setMonth === 2) {
+          if (setYear % 4 === 0 && setYear % 100 !== 0) {
+            this.setDays(29)
           } else {
-            // 大月
-            if (this.contains(this.bigMonth, setMonth)) {
-              this.setDays(31)
-            } else {
-              this.setDays(30)
-            }
+            this.setDays(28)
           }
-          this.scrollChange = true
-          this.date.setDate(setDay)
+        } else {
+          // 大月
+          if (this.contains(this.bigMonth, setMonth)) {
+            this.setDays(31)
+          } else {
+            this.setDays(30)
+          }
         }
-        this.scrollChange = true
-        this.date.setYear(setYear)
-        this.scrollChange = true
-        this.date.setMonth(setMonth - 1)
+        if (this.withDay) {
+          this.scrollChange = true
+          this.selectDate = timeUtils.formatDate(timeUtils.stringToDate(setYear + '-' + setMonth + '-' + setDay), 'yyyy-MM-dd')
+        } else {
+          this.scrollChange = true
+          console.debug(timeUtils.stringToDate(setYear + '-' + setMonth))
+          this.selectDate = timeUtils.formatDate(timeUtils.stringToDate(setYear + '-' + setMonth + '-01'), 'yyyy-MM-dd')
+
+          // if (this.onDateChange) {
+          // this.onDateChange(timeUtils.stringToDate(setYear + '-' + setMonth + '-' + setDay))
+          // }
+        }
+        // this.$apply()
       }
     }
     watch = {
-      date(curVal) {
+      selectDate(curVal) {
+        console.debug('datepicker selectDate change:' + curVal + this.scrollChange)
         if (!this.scrollChange) {
-          console.log('watch date:' + curVal)
           console.log(this.value)
-          this.value[0] = curVal.getFullYear() - 1990
-          this.value[1] = curVal.getMonth()
-          this.value[2] = curVal.getDate() - 1
+          const sd = timeUtils.stringToDate(curVal)
+          this.value[0] = sd.getFullYear() - 1990
+          this.value[1] = sd.getMonth()
+          if (this.withDay) {
+            this.value[2] = sd.getDate() - 1
+          }
+          this.$apply()
           console.log(this.value)
         }
         this.scrollChange = false
@@ -110,6 +131,11 @@
     }
     events = {}
     onLoad() {
+      console.debug(this)
+      const sd = timeUtils.stringToDate(this.selectDate)
+      this.value[0] = sd.getFullYear() - 1990
+      this.value[1] = sd.getMonth()
+      this.value[2] = sd.getDate() - 1
     }
     // 判断元素是否在一个数组
     contains (arr, obj) {

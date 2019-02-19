@@ -58,11 +58,20 @@ export default class Basepage extends wepy.mixin {
 
   onLoad() {
     console.debug('base onload')
+    console.debug(this)
     // this.initData()
     this.requestData()
   }
 
   onShow() {
+  }
+
+  applyAsync() {
+    const that = this
+    setTimeout(function() {
+      // f1 的代码
+      that.$apply()
+    }, 0)
   }
 }
 </script>

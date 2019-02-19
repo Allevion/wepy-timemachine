@@ -1,14 +1,14 @@
 <template>
   <view class="loadmore">
-    <view wx:if="{{isEnd}}">
+    <block wx:if="{{isEnd}}">
       <view class="loadmore__line"></view>
       <text class="loadmore__text">到底了</text>
       <view class="loadmore__line"></view>
-    </view>
-    <view wx:else>
+    </block>
+    <block wx:else>
       <view class="loadmore__icon"></view>
       <text class="loadmore__text">加载中...</text>
-    </view>
+    </block>
   </view>
 </template>
 
@@ -28,42 +28,42 @@
   }
 </script>
 
-<style lang="less" scoped type="text/less">
+<style lang="less" type="text/less">
   .loadmore {
     display: flex;
     width: 100%;
-    height: 92 rpx;
+    height: 92rpx;
     justify-content: center;
     align-items: center;
 
     &__line {
-      width: 100 rpx;
-      height: 1 rpx;
-      border-top: 1 rpx solid #d2d2d2;
+      width: 100rpx;
+      height: 1rpx;
+      border-top: 1rpx solid #d2d2d2;
     }
 
     &__icon {
-      width: 32 rpx;
-      height: 32 rpx;
-      margin-left: 16 rpx;
+      width: 32rpx;
+      height: 32rpx;
+      margin-left: 16rpx;
     }
 
     &__text {
-      margin: 0 16 rpx 0 8 rpx;
+      margin: 0 16rpx 0 8rpx;
       color: #999;
-      font-size: 28 rpx;
+      font-size: 28rpx;
     }
 
     &__wrap {
       color: #999;
-      font-size: 28 rpx;
+      font-size: 28rpx;
       display: flex;
       justify-content: center;
       align-items: center;
     }
     &__icon {
-      width: 32 rpx;
-      height: 32 rpx;
+      width: 32rpx;
+      height: 32rpx;
       margin-right: 8px;
       display: inline-block;
       vertical-align: middle;
@@ -76,7 +76,7 @@
     &__loading-text {
       display: inline-block;
       vertical-align: middle;
-      margin-left: 8 rpx;
+      margin-left: 8rpx;
     }
   }
 

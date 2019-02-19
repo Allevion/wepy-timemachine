@@ -20,7 +20,7 @@
 
 <template>
   <basepage class="basepage">
-    <view @tap="wxlogin">wxlogin</view>
+    <!--<view @tap="wxlogin">wxlogin</view>-->
     <wxc-popup id="login__popup" align="center" locked="{{true}}">
       <view class="popup__content">
         <view class="popup__desc text-secondary">先登录</view>
