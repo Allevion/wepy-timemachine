@@ -21,33 +21,35 @@
 }
 
 /* 主轴对齐方式 */
-.dir--left {
+.flex--dir--left {
   flex-direction: row;
 }
-.dir--right {
+.flex--dir--right {
   flex-direction: row-reverse;
 }
-.dir--top {
+.flex--dir--top {
   flex-direction: column;
 }
-.dir--bottom {
+.flex--dir--bottom {
   flex-direction: column-reverse;
 }
 
 /* 主轴排列方式 */
-.main--start {
+.flex--main--start {
   justify-content: flex-start;
 }
-.main--end {
+.flex--main--end {
   justify-content: flex-end;
 }
-.main--between {
+// 分开
+.flex--main--between {
   justify-content: space-between;
 }
-.main--center {
+.flex--main--center {
   justify-content: center;
 }
-.main--around {
+// 等分居中
+.flex--main--around {
   justify-content: space-around;
 }
 
@@ -64,19 +66,19 @@
 
 
 /* 交叉轴排列方式 */
-.cross--start {
+.flex--cross--start {
   align-items: flex-start;
 }
-.cross--end {
+.flex--cross--end {
   align-items: flex-end;
 }
-.cross--center {
+.flex--cross--center {
   align-items: center;
 }
-.cross--baseline {
+.flex--cross--baseline {
   align-items: baseline;
 }
-.cross--stretch {
+.flex--cross--stretch {
   align-items: stretch;
 }
 
@@ -167,7 +169,7 @@
 }
 
 .list_body{
-  &:extend(.content,.flex,.dir--left);
+  &:extend(.content,.flex,.flex--dir--left);
   min-height: 90rpx;
   height: 90rpx;
 }

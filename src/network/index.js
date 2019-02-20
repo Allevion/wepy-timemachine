@@ -31,7 +31,8 @@ class Request {
 
   request(data) {
     const { url, method, header, params } = this.interceptors.request ? this.interceptors.request(data) : data
-    console.debug(url + params)
+    console.debug(method + url)
+    console.debug(params)
 
     const url2 = (this._baseUrl || '') + url
     // 参数处理

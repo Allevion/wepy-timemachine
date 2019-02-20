@@ -10,7 +10,7 @@ export default class BaseListPage extends wepy.mixin {
   computed = {
     isListEnd() {
       // console.debug('components isListEnd:' + this.pageData.isListEnd())
-      return this.pageData.isListEnd()
+      return this.pageData.pager.isEnd
     }
   }
   // methods = {}
@@ -19,8 +19,22 @@ export default class BaseListPage extends wepy.mixin {
   // getListData(){
   //
   // }
+  assmableListData(res) {
+    this.pageData.listData = this.listData.concat(this.getListData(res))
+    this.pageData.pager.isEnd = this.getIsEnd(res)
+  }
+  getNextIndex() {
+    return this.pageData.getNextIndex()
+  }
+  getListData(res) {
+    return res.list
+  }
+  getIsEnd(res) {
+    return res.list && res.list.length > 0
+  }
   afterRequstData(res) {
-    this.pageData.appendData(new PageListBean(res))
+    this.assmableListData(res)
+    // this.pageData.appendData(new PageListBean(res))
     // this.refreshing = false
     this.$broadcast('refreshing', false)
     this.$broadcast('loadingMore', false)
@@ -29,7 +43,7 @@ export default class BaseListPage extends wepy.mixin {
       this.$broadcast('loadingEnd', false)
     } else {
       this.$broadcast('updatePageStatus', this.PAGE_SUCCESS)
-      if (this.pageData.pager.end) {
+      if (this.pageData.pager.isEnd) {
         this.$broadcast('loadingEnd', true)
       }
     }

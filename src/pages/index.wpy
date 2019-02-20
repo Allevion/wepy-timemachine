@@ -88,7 +88,7 @@
       if (wepy.$instance.globalData.userInfo && wepy.$instance.globalData.userInfo.unionid) {
         console.log(1)
         this.updateUserInfo(wepy.$instance.globalData.userInfo)
-        this.goMain()
+        this.getMemberInfo(wepy.$instance.globalData.userInfo.unionid)
       } else if (this.data.canIUse) {
         console.log(2)
         // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
@@ -138,11 +138,6 @@
         })
       }
     }
-    goMain() {
-      wx.navigateTo({
-        url: 'home'
-      })
-    }
     afterWxLogin(detail) {
       this.updateUserInfo(detail.userInfo)
       this.getWxId(detail)
@@ -174,7 +169,20 @@
         }
       })
     }
-
+    getMemberInfo(unionid) {
+      const that = this
+      const params = {
+        unionid: unionid,
+        device: '4',
+      }
+      req.post('weixinLogin.htm', params).then(res => {
+        console.debug(res)
+        wepy.$instance.globalData.memberId = res.memberId
+        that.goMain()
+      }).catch(e => {
+        that.goBindPhone()
+      })
+    }
     getWxId(detail) {
       if (wepy.$instance.globalData.userInfo.unionid) {
         this.goMain()
@@ -198,16 +206,7 @@
                 openid: res.result.openId
               }
             })
-            const params = {
-              unionid: res2.result,
-              device: '4',
-            }
-            req.post('weixinLogin.htm', params).then(res => {
-              console.debug(res)
-              that.goMain()
-            }).catch(e => {
-              that.goBindPhone()
-            })
+            that.getMemberInfo(res2.result)
           })
         })
       }

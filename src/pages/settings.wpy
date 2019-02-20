@@ -64,31 +64,30 @@ export default class Settings extends wepy.page {
   }
 
   methods = {
-    getUserInfo(e){
+    getUserInfo(e) {
       this.userInfo = e.detail.userInfo
       this.$apply()
     }
   }
 
   computed = {
-    avatarUrl(){
-      if (objectUtils.isEmpty(this.userInfo) || objectUtils.isEmpty(this.userInfo.avatarUrl)){
+    avatarUrl() {
+      if (objectUtils.isEmpty(this.userInfo) || objectUtils.isEmpty(this.userInfo.avatarUrl)) {
         return '../assets/images/head.jpeg'
       } else {
         return this.userInfo.avatarUrl
       }
     },
-    username(){
-      if (objectUtils.isEmpty(this.userInfo.nickName)){
-        if  (objectUtils.isEmpty(this.userInfo.phone)){
+    username() {
+      if (objectUtils.isEmpty(this.userInfo.nickName)) {
+        if (objectUtils.isEmpty(this.userInfo.phone)) {
           return '未登录'
-        }else {
+        } else {
           return this.userInfo.phone
         }
-      }else {
+      } else {
         return this.userInfo.nickName
       }
-
     }
 
   }

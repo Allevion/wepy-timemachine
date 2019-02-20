@@ -16,16 +16,20 @@
       </image>
     </view>
 
-    <view class="list_body margin-vertical">
-      <view class="" >本月提成(元)：</view>
-      <view class="highlight_color" style="flex-grow: 1;margin-left: 5px">一个亿</view>
-      <navigator class="text-secondary" url="record" hover-class="navigator-hover">查看明细</navigator>
-      <wxc-icon type="arrow-right" style="margin-left: 5px" color="#999"/>
+    <view class="list_body margin-vertical flex--main--between">
+      <view class="flex">
+        <view class="" >本月提成(元)：</view>
+        <view class="highlight_color" style="flex-grow: 1;margin-left: 5px">一个亿</view>
+      </view>
+      <view class="flex">
+        <navigator class="text-secondary" url="record" hover-class="navigator-hover">查看明细</navigator>
+        <wxc-icon type="arrow-right" style="margin-left: 5px" color="#999"/>
+      </view>
     </view>
 
     <view class="divider-horizontal margin-horizontal"/>
 
-    <view class="content flex main--around">
+    <view class="content flex flex--main--around">
       <view class="padding-vertical">
         <view >本月出借年化总额(元)</view>
         <view style="text-align: center" class="highlight_color margin-vertical-small">十个亿</view>
@@ -36,9 +40,11 @@
       </view>
     </view>
 
-    <view class="list_body flex dir--left margin-vertical">
-      <image src="../assets/images/total.png" style="height: 25px;width: 25px"/>
-      <view  style="flex-grow: 1;margin-left: 5px">累计总收益</view>
+    <view class="list_body flex--dir--left margin-vertical flex--main--between">
+      <view class="flex">
+        <image src="../assets/images/total.png" style="height: 25px;width: 25px"/>
+        <view  style="flex-grow: 1;margin-left: 5px">累计总收益</view>
+      </view>
       <view class="highlight_color">一个亿</view>
     </view>
 
@@ -59,9 +65,11 @@
 
 <script>
 import wepy from 'wepy'
-// import req from '@/network'
+import req from '@/network'
+import Basepage from '@/base/basepage'
 
 export default class Home extends wepy.page {
+  mixins = [Basepage]
   config = {
     enablePullDownRefresh: false,
     usingComponents: {
@@ -79,9 +87,18 @@ export default class Home extends wepy.page {
   onLoad() {
   }
   data = {
+    data: {}
   }
 
   components = {
+  }
+  requestData() {
+    const params = {
+      financialManager: wepy.$instance.globalData.memberId
+    }
+    req.post('financeIndex.htm', params).then(res => {
+      console.debug(res)
+    })
   }
 }
 </script>

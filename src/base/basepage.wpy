@@ -73,5 +73,10 @@ export default class Basepage extends wepy.mixin {
       that.$apply()
     }, 0)
   }
+  goMain() {
+    wx.navigateTo({
+      url: 'home'
+    })
+  }
 }
 </script>

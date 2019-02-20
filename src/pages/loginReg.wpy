@@ -180,8 +180,10 @@
 <script>
   import wepy from 'wepy'
   import req from '@/network'
+  import Basepage from '@/base/basepage'
 
   export default class LoginReg extends wepy.page {
+    mixins = [Basepage]
     config = {
       navigationBarTitleText: '绑定账户'
     }
@@ -272,12 +274,10 @@
           }
           req.post('miniprogramLogin.htm', params).then(res => {
             wx.hideLoading()
-            wx.setStorageSync('memberInfo', res)
+            wepy.$instance.globalData.memberId = res.memberId
             wx.navigateBack({
               delta: 1
             })
-              // todo
-              // request.saveUserInfo(unionid)
           }).catch(e => {
             wx.showToast({
               title: e.msg,

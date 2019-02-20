@@ -23,47 +23,18 @@ export class BaseBean {
 * */
 export class PageListBean extends BaseBean {
   init() {
-    this.pager = {end: false, pageIndex: -1, pageCount: 999}
+    this.pager = {isEnd: false, pageIndex: Number(0)}
     this.listData = []
   }
 
   getNextIndex() {
-    return Number(this.pager.pageIndex) + 1
+    this.pager.pageIndex = Number(this.pager.pageIndex) + 1
+    return Number(this.pager.pageIndex)
   }
-
-  appendData(pageListBean) {
-    this.listData = this.listData.concat(pageListBean.result)
-    this.pager.end = !pageListBean.pager.hasMore
-    this.pager.pageIndex = pageListBean.pager.pageIndex
-    this.pager.pageCount = pageListBean.pager.pageCount
-  }
-  isListEnd() {
-    if (this.pager) {
-      if (this.pager.pageIndex >= this.pager.pageCount) {
-        return true
-      } else {
-        return false
-      }
-    } else {
-      return true
-    }
-  }
-}
-
-export class TimeLineListBean extends PageListBean {
-
 }
 
 export class UserBean extends BaseBean {
   id;
   name;
   headimg;
-}
-
-export class CommentBean extends BaseBean {
-  id = '';
-  user = new UserBean();
-  content = '';
-  createTime = '';
-  like = 0;
 }
