@@ -83,7 +83,6 @@
       loadmore: loadmore
     }
     data = {
-      test: 'ddd',
       changeModeStr: timeUtils.formatDate(new Date(), 'yyyy-MM'),
       changeModeIcon: '',
       selectDate: timeUtils.formatDate(new Date(), 'yyyy-MM-dd'),
