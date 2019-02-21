@@ -1,6 +1,6 @@
 <style lang="less" type="text/less" scoped>
-  page{
-    background-color: #fff;
+  .page{
+    background: #fff;
   }
   input:-moz-placeholder{
     font-size: 32rpx;
@@ -129,51 +129,53 @@
 </style>
 
 <template>
-  <view class='top-container'>
-    <view>
-      <image mode='widthFix' src='http://file.88mmmoney.com/6412fbdd-f64c-4082-97c6-fc4177e717b4'></image>
-    </view>
-    <text class='mmintro'>绑定妈妈钱包账号，兑换奖品</text>
-  </view>
-  <view class='input-container'>
-    <input placeholder='请输入手机号' type='number' maxlength='11' bindinput='phoneInput'></input>
-    <input wx:if='{{showLogin}}' placeholder='请输入您的密码' type='text' password='true' bindinput='loginPwdInput'></input>
-    <view class='authcode-container' wx:if="{{showReg}}">
-      <input placeholder='请输入短信验证码'  bindinput='authCodeInput'></input>
-      <text bindtap='getAuthCode'>{{authCodeText}}</text>
-    </view>
-    <input wx:if="{{showReg}}" password='true' placeholder='请输入6-20位登录密码' maxlength='20'  bindinput='regPwdInput'></input>
-    <input wx:if="{{showReg}}" type='number' placeholder='请输入推荐人手机号(选填)'  bindinput='friendCodeInput'></input>
-    <button class='regBtn' bindtap='bindMama'>{{btnText}}</button>
-  </view>
-  <view class='bottom-container'>
-    <view class='data-report'>
+  <view class="page whole-page">
+    <view class='top-container'>
       <view>
-        <view>稳健运营
-          <text>(天)</text>
-        </view>
-        <view>{{operationDays}}</view>
-      </view>
-      <view>
-        <view>累计为投资人赚取
-          <text>(元)</text>
-        </view>
-        <view>{{receivedInterestAll}}</view>
-      </view>
-      <view>
-        <view>合规成交
-          <text>(笔)</text>
-        </view>
-        <view>{{totalBidOrderCount}}</view>
+        <image mode='widthFix' src='http://file.88mmmoney.com/6412fbdd-f64c-4082-97c6-fc4177e717b4'></image>
       </view>
     </view>
-    <view class='tencentSafe'>
-      <image src='http://file.88mmmoney.com/bb72e258-00a9-4788-a2c8-9f7df8696ff6' mode='widthFix'></image>
-      <text>腾讯云数据安全保障</text>
+    <view class='input-container'>
+      <input placeholder='请输入手机号' type='number' maxlength='11' bindinput='phoneInput'></input>
+      <input wx:if='{{showLogin}}' placeholder='请输入您的密码' type='text' password='true' bindinput='loginPwdInput'></input>
+      <view class='authcode-container' wx:if="{{showReg}}">
+        <input placeholder='请输入短信验证码'  bindinput='authCodeInput'></input>
+        <text bindtap='getAuthCode'>{{authCodeText}}</text>
+      </view>
+      <input wx:if="{{showReg}}" password='true' placeholder='请输入6-20位登录密码' maxlength='20'  bindinput='regPwdInput'></input>
+      <input wx:if="{{showReg}}" type='number' placeholder='请输入推荐人手机号(选填)'  bindinput='friendCodeInput'></input>
+      <button class='regBtn' bindtap='bindMama'>{{btnText}}</button>
     </view>
-    <!-- <view class='agreement-container'>
-      <text>注册代表您同意</text><text class='userAgreement'>《用户协议》</text>
-    </view> -->
+    <view class='bottom-container'>
+      <view class='data-report'>
+        <view>
+          <view>稳健运营
+            <text>(天)</text>
+          </view>
+          <view>{{operationDays}}</view>
+        </view>
+        <view>
+          <view>累计为投资人赚取
+            <text>(元)</text>
+          </view>
+          <view>{{receivedInterestAll}}</view>
+        </view>
+        <view>
+          <view>合规成交
+            <text>(笔)</text>
+          </view>
+          <view>{{totalBidOrderCount}}</view>
+        </view>
+      </view>
+      <view class='tencentSafe'>
+        <image src='http://file.88mmmoney.com/bb72e258-00a9-4788-a2c8-9f7df8696ff6' mode='widthFix'></image>
+        <text>腾讯云数据安全保障</text>
+      </view>
+      <!-- <view class='agreement-container'>
+        <text>注册代表您同意</text><text class='userAgreement'>《用户协议》</text>
+      </view> -->
+    </view>
+
   </view>
 </template>
 

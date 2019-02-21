@@ -11,7 +11,6 @@ export default class BaseListPage extends wepy.mixin {
       },
       listData: []
     },
-    test: 1
   }
 
   computed = {
@@ -27,7 +26,9 @@ export default class BaseListPage extends wepy.mixin {
   //
   // }
   assmableListData(res) {
-    this.pageData.listData = this.pageData.listData.concat(this.getListData(res))
+    if (this.getListData(res)) {
+      this.pageData.listData = this.pageData.listData.concat(this.getListData(res))
+    }
     this.pageData.pager.isEnd = this.getIsEnd(res)
   }
   getNextIndex() {
@@ -61,12 +62,23 @@ export default class BaseListPage extends wepy.mixin {
   onPullDownRefresh() {
     // if (this.refreshing || this.loadingMore) return false
     console.debug('base list onPullDownRefresh')
-    this.pageData.init()
+    this.initData()
     this.$broadcast('loadingEnd', false)
     // this.refreshing = true
     this.$broadcast('refreshing', true)
     // this.$apply()
     this.requestData()
+  }
+
+  initData() {
+    this.pageData = {
+      pager: {
+        pageIndex: Number(0),
+        pageSize: 14,
+        isEnd: false
+      },
+      listData: []
+    }
   }
 
   onReachBottom() {

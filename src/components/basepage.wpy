@@ -1,10 +1,10 @@
 <template >
   <view class="basepage whole-page">
     <view class="whole-page center-forchild" wx:if="{{pageStatus==='PAGE_ERROR'}}">
-      错误
+      页面出错
     </view>
     <view class="whole-page center-forchild" wx:if="{{pageStatus==='PAGE_EMPTY'}}">
-      空
+      无数据
     </view>
     <view class="whole-page" wx:if="{{pageStatus==='PAGE_SUCCESS'}}">
       <slot></slot>

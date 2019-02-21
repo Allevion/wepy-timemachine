@@ -15,6 +15,7 @@
 
 <template>
   <basepage class="basepage">
+    <view>{{formatTime(1)}}</view>
     <view class="list_body">
       <view @tap="changeMode">{{changeModeStr}}</view>
       <image wx:if="{{selectMode}}" class="margin-horizontal-small" style="width: 15px;height: 10px" src="../assets/images/change.png"/>
@@ -38,7 +39,7 @@
       </view>
     </view>
     <view class="list margin-vertical">
-      <repeat for="{{pageData.listData}}" index="index" item="item" key="key" >
+      <repeat for="{{getData}}" index="index" item="item" key="key" >
         <!--<timeline :datas.sync="item"></timeline>-->
         <view class="record-item content">
           <view class="flex flex--main--between ">
@@ -47,7 +48,7 @@
           </view>
           <view class="flex flex--main--between">
             <view class="text-secondary margin-vertical-small">{{item.investtypename}}</view>
-            <view class="text-secondary margin-vertical-small">{{item.createTime}}</view>
+            <view class="text-secondary margin-vertical-small">{{item['date']}}</view>
           </view>
         </view>
         <view class="divider-horizontal"></view>
@@ -94,6 +95,10 @@
       month: timeUtils.formatDate(new Date(), 'yyyy-MM'),
     }
     methods = {
+      formatTime(time) {
+        console.debug('formatTime')
+        return 'kk' + time
+      },
       dayBeginClick() {
         this.selectDate = this.dayBegin
         this.dayChangeFocus = 'day1'
@@ -141,10 +146,19 @@
       }
     }
     computed = {
-      // getDate () {
-      //   // return timeUtils.formatDate(this.selectDate, 'yyyy-MM-dd')
-      //   return timeUtils.formatDate(this.selectDate, 'yyyy-MM-dd')
-      // }
+      getData () {
+        console.debug(this.pageData.listData)
+        if (this.pageData.listData.length === 0) {
+          return []
+        } else {
+          return this.pageData.listData.map(function(item) {
+            try {
+              item.date = timeUtils.formatDate(new Date(), 'yyyy-MM-dd hh:mm')
+            } catch (e) {}
+            return item
+          })
+        }
+      }
     }
     events = {}
     watch = {
@@ -190,13 +204,17 @@
       let toDate = null
       if (this.dayMode) {
         fromDate = this.dayBegin
-        toDate = this.dayEnd | timeUtils.formatDate(new Date(), 'yyyy-MM-dd')
+        if (this.dayEnd) {
+          toDate = this.dayEnd
+        } else {
+          toDate = timeUtils.formatDate(new Date(), 'yyyy-MM-dd')
+        }
       } else {
         fromDate = this.month
         toDate = this.month
       }
       const params = {
-        financialManager: wepy.$instance.globalData.memberId,
+        financialManager: '100000329283',
         fromDate: fromDate,
         toDate: toDate,
         pageNum: this.getNextIndex(),

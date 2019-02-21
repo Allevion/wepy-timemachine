@@ -83,7 +83,7 @@
       const dialogComponent = this.$wxpage.selectComponent('#login__popup')
       dialogComponent && dialogComponent.show()
     }
-    async onLoad() {
+    async onShow() {
       this.getWxSession()
       if (wepy.$instance.globalData.userInfo && wepy.$instance.globalData.userInfo.unionid) {
         console.log(1)
