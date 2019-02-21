@@ -69,9 +69,9 @@
   import BaseListPage from '@/base/baseListPage'
   import Basepage from '@/base/basepage'
   export default class Record extends wepy.page {
-    mixins = [BaseListPage, Basepage]
+    mixins = [BaseListPage, Basepage] //  注意顺序
     config = {
-      navigationBarTitleText: 'Record',
+      navigationBarTitleText: '明细',
       usingComponents: {
         'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
         // 'wxc-loadmore': '../../packages/@minui/wxc-loadmore/dist/index'
@@ -201,7 +201,7 @@
         fromDate: fromDate,
         toDate: toDate,
         pageNum: this.getNextIndex(),
-        pageSize: 20
+        pageSize: this.pageData.pager.pageSize
       }
       req.post('financeDetail.htm', params)
         .then(res => {
@@ -212,7 +212,7 @@
       return res.stepInfoResponse.list
     }
     getIsEnd(res) {
-      return !(res.stepInfoResponse && res.stepInfoResponse.list && res.stepInfoResponse.list.length > 0)
+      return !(res.stepInfoResponse && res.stepInfoResponse.list && res.stepInfoResponse.list.length === this.pageData.pager.pageSize)
     }
   }
 </script>

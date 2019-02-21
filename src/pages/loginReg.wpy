@@ -275,9 +275,10 @@
           req.post('miniprogramLogin.htm', params).then(res => {
             wx.hideLoading()
             wepy.$instance.globalData.memberId = res.memberId
-            wx.navigateBack({
-              delta: 1
-            })
+            // wx.navigateBack({
+            //   delta: 1
+            // })
+            that.goMain()
           }).catch(e => {
             wx.showToast({
               title: e.msg,

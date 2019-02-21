@@ -1,10 +1,17 @@
 <script>
-import {PageListBean} from '@/models/models'
 import wepy from 'wepy'
 
 export default class BaseListPage extends wepy.mixin {
   data = {
-    pageData: new PageListBean()
+    pageData: {
+      pager: {
+        pageIndex: Number(0),
+        pageSize: 14,
+        isEnd: false
+      },
+      listData: []
+    },
+    test: 1
   }
 
   computed = {
@@ -20,11 +27,12 @@ export default class BaseListPage extends wepy.mixin {
   //
   // }
   assmableListData(res) {
-    this.pageData.listData = this.listData.concat(this.getListData(res))
+    this.pageData.listData = this.pageData.listData.concat(this.getListData(res))
     this.pageData.pager.isEnd = this.getIsEnd(res)
   }
   getNextIndex() {
-    return this.pageData.getNextIndex()
+    this.pageData.pager.pageIndex = this.pageData.pager.pageIndex + 1
+    return this.pageData.pager.pageIndex
   }
   getListData(res) {
     return res.list
@@ -47,8 +55,8 @@ export default class BaseListPage extends wepy.mixin {
         this.$broadcast('loadingEnd', true)
       }
     }
-    this.$apply()
     wx.stopPullDownRefresh()
+    this.$apply()
   }
   onPullDownRefresh() {
     // if (this.refreshing || this.loadingMore) return false
@@ -63,18 +71,14 @@ export default class BaseListPage extends wepy.mixin {
 
   onReachBottom() {
     console.debug('base list onReachBottom')
-    if (this.pageData.isListEnd()) return false
+    if (this.pageData.pager.isEnd) return false
     // this.loadingMore = true
     this.$broadcast('loadingMore', true)
     // this.$apply()
     this.requestData()
   }
-  // applyAsync() {
-  //   const that = this
-  //   setTimeout(function() {
-  //     // f1 的代码
-  //     that.$apply()
-  //   }, 0)
-  // }
+  onLoad() {
+    this.requestData()
+  }
 }
 </script>

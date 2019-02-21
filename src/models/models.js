@@ -21,7 +21,7 @@ export class BaseBean {
 * 1.不定义变量，变量会在构造构造后初始化，会覆盖
 * 2.由于组件数据需要绑定变量，所以不用函数封装返回数据
 * */
-export class PageListBean extends BaseBean {
+export class PageListBean {
   init() {
     this.pager = {isEnd: false, pageIndex: Number(0)}
     this.listData = []
