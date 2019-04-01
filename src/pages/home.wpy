@@ -6,19 +6,19 @@
 
 <template>
   <view class="container">
-    <view class="content" style="text-align: center;position: relative;">
+    <view style="text-align: center;position: relative;background-color: white">
       <view style="position: absolute;width: 100%;margin-top: 40px" >
         <view style="text-align: center;font-size: 10px;color: white;">今日提成(元)</view>
-        <view style="text-align: center;font-size: 28px;color: white;" class="margin-vertical-small">154(元)</view>
+        <view style="text-align: center;font-size: 28px;color: white;" class="margin-vertical-small">{{pageData.commissionTody || 0}}</view>
       </view>
-      <image class="margin-vertical" style="width: 100%;" mode="widthFix" src="../assets/images/index_today_bg.png">
+      <image class="margin-vertical" style="width: 90%;" mode="widthFix" src="../assets/images/index_today_bg.png">
       </image>
     </view>
 
     <view class="list_body margin-vertical flex--main--between">
       <view class="flex">
         <view class="" >本月提成(元)：</view>
-        <view class="highlight_color" style="flex-grow: 1;margin-left: 5px">{{pageData.commissionThisMonth}}</view>
+        <view class="highlight_color" style="flex-grow: 1;margin-left: 5px">{{pageData.commissionThisMonth || 0}}</view>
       </view>
       <view class="flex">
         <navigator class="text-secondary" url="record" hover-class="navigator-hover">查看明细</navigator>
@@ -31,11 +31,11 @@
     <view class="content flex flex--main--around">
       <view class="padding-vertical">
         <view >本月出借年化总额(元)</view>
-        <view style="text-align: center" class="highlight_color margin-vertical-small">{{pageData.yearAmountThisMonth}}</view>
+        <view style="text-align: center" class="highlight_color margin-vertical-small">{{pageData.yearAmountThisMonth || 0}}</view>
       </view>
       <view class="padding-vertical">
         <view>本月出借笔数(笔)</view>
-        <view style="text-align: center" class="highlight_color margin-vertical-small">{{pageData.financfialDetailsThisMonth}}</view>
+        <view style="text-align: center" class="highlight_color margin-vertical-small">{{pageData.financfialDetailsThisMonth || 0}}</view>
       </view>
     </view>
 
@@ -44,7 +44,7 @@
         <image src="../assets/images/total.png" style="height: 25px;width: 25px"/>
         <view  style="flex-grow: 1;margin-left: 5px">累计总收益</view>
       </view>
-      <view class="highlight_color">{{pageData.totalCommission}}</view>
+      <view class="highlight_color">{{pageData.totalCommission || 0}}</view>
     </view>
 
     <view class="text-secondary margin-vertical margin-horizontal">
@@ -90,7 +90,8 @@ export default class Home extends wepy.page {
       commissionThisMonth: 0.00,
       financfialDetailsThisMonth: 0,
       yearAmountThisMonth: 0.01,
-      totalCommission: 0.00
+      totalCommission: 0.00,
+      commissionTody: 0.00
     }
   }
 

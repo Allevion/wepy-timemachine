@@ -48,10 +48,10 @@ export default class BaseListPage extends wepy.mixin {
     this.$broadcast('refreshing', false)
     this.$broadcast('loadingMore', false)
     if (this.pageData.listData.length === 0) {
-      this.$broadcast('updatePageStatus', this.PAGE_EMPTY)
+      // this.$broadcast('updatePageStatus', this.PAGE_EMPTY)
       this.$broadcast('loadingEnd', false)
     } else {
-      this.$broadcast('updatePageStatus', this.PAGE_SUCCESS)
+      // this.$broadcast('updatePageStatus', this.PAGE_SUCCESS)
       if (this.pageData.pager.isEnd) {
         this.$broadcast('loadingEnd', true)
       }

@@ -26,7 +26,7 @@
       <view wx:if="{{dayMode}}" class="flex">
         <input @tap="dayBeginClick" class="day-show" value="{{dayBegin}}" disabled="{{true}}"/>
         <view>至</view>
-        <input @tap="dayEndClick" class="day-show" value="{{dayEnd}}" placeholder="选填"  disabled="{{true}}"/>
+        <input @tap="dayEndClick" class="day-show" value="{{dayEnd}}" placeholder="结束时间（选填）"  disabled="{{true}}"/>
       </view>
       <view wx:if="{{!dayMode}}" class="flex">
         <view class="day-show" style="margin:15px auto">{{month}}</view>
@@ -44,10 +44,10 @@
         <view class="record-item content">
           <view class="flex flex--main--between ">
             <view class="text-primary" style="font-size: 12px">{{item.realname}}{{item.phonenum}}</view>
-            <view class="text-highlight">{{item.commissionamount}}</view>
+            <view class="text-highlight">+{{item.commissionamount}}</view>
           </view>
           <view class="flex flex--main--between">
-            <view class="text-secondary margin-vertical-small">{{item.investtypename}}</view>
+            <view class="text-secondary margin-vertical-small">{{item.investtypename}}-{{item.yearamount}}元</view>
             <view class="text-secondary margin-vertical-small">{{item['date']}}</view>
           </view>
         </view>
@@ -72,7 +72,7 @@
   export default class Record extends wepy.page {
     mixins = [BaseListPage, Basepage] //  注意顺序
     config = {
-      navigationBarTitleText: '明细',
+      navigationBarTitleText: '提成明细（年化）',
       usingComponents: {
         'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
         // 'wxc-loadmore': '../../packages/@minui/wxc-loadmore/dist/index'
@@ -153,7 +153,7 @@
         } else {
           return this.pageData.listData.map(function(item) {
             try {
-              item.date = timeUtils.formatDate(new Date(), 'yyyy-MM-dd hh:mm')
+              item.date = timeUtils.formatDate(new Date(item.createTime), 'yyyy-MM-dd hh:mm')
             } catch (e) {}
             return item
           })
@@ -207,14 +207,14 @@
         if (this.dayEnd) {
           toDate = this.dayEnd
         } else {
-          toDate = timeUtils.formatDate(new Date(), 'yyyy-MM-dd')
+          toDate = this.dayBegin
         }
       } else {
         fromDate = this.month
         toDate = this.month
       }
       const params = {
-        financialManager: '100000329283',
+        financialManager: wepy.$instance.globalData.memberId,
         fromDate: fromDate,
         toDate: toDate,
         pageNum: this.getNextIndex(),
